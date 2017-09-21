@@ -2,13 +2,12 @@
 <img src="README_files/overview.png" alt="overview" style="float:middle;">
 </center>
 
-# (Optional) Project 5: Deep Classification
+# Deep Classification
 
 
 ## Brief
-* Due to an one week delay of class, homework 5 is optional. 
 * ***+2 extra credit of the whole semester***
-* Due: <b>Dec. 28</b>, 11:59pm.
+* Due: <b>Oct. 5</b>, 11:59pm.
 * Required files: results/index.md, and code/
 * [Project reference](http://aliensunmin.github.io/project/handcam/)
 
@@ -25,17 +24,7 @@ HandCam (Fig. 1), a novel wearable camera capturing activities of hands, for rec
 ## Requirement   
 
 - Python
-- [Caffe](https://github.com/BVLC/caffe)
-- (Optional) [TensorFlow](https://github.com/tensorflow/tensorflow)
-
-### Install Caffe
-
-Check out the [project site](http://caffe.berkeleyvision.org) for all the details like
-
-- [DIY Deep Learning for Vision with Caffe](https://docs.google.com/presentation/d/1UeKXVgRvvxg9OUdh_UiC5G71UMscNPlvArsWER41PsU/edit#slide=id.p)
-- [Tutorial Documentation](http://caffe.berkeleyvision.org/tutorial/)
-- [BVLC reference models](http://caffe.berkeleyvision.org/model_zoo.html) and the [community model zoo](https://github.com/BVLC/caffe/wiki/Model-Zoo)
-- [Installation instructions](http://caffe.berkeleyvision.org/installation.html)
+- [TensorFlow](https://github.com/tensorflow/tensorflow)
 
 ## Data
 
