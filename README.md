@@ -12,7 +12,7 @@
 * [Project reference](http://aliensunmin.github.io/project/handcam/)
 
 
-##Overview
+## Overview
 
 
 Recently, the technological advance of wearable devices has led to significant interests in recognizing human behaviors in daily life (i.e., uninstrumented environment). Among many devices, egocentric camera systems have drawn significant attention, since the camera is aligned with the field-of-view of wearer, it naturally captures what a person sees. These systems have shown great potential in recognizing daily activities(e.g., making meals, watching TV, etc.), estimating hand poses, generating howto videos, etc.
@@ -99,6 +99,24 @@ Ges= {  'free':0,
         'tripod':10,
         'medium-wrap':11,
         'light-tool':12}
+```
+
+### Split of the dataset
+```
+train_set = [['office', 'leftD1'], ['office', 'leftD2'], ['office', 'leftD3'], 
+              ['house', 'leftD1'], ['house', 'leftD2'], ['house', 'leftD3'], 
+              ['lab', 'leftD1'], ['lab', 'leftD2'], ['lab', 'leftD6'], ['lab', 'leftD7'], 
+              ['office', 'rightD1'], ['office', 'rightD2'], ['office', 'rightD3'], 
+              ['house', 'rightD1'], ['house', 'rightD2'], ['house', 'rightD3'], 
+              ['lab', 'rightD1'], ['lab', 'rightD2'], ['lab', 'rightD6'], ['lab', 'rightD7']]
+
+
+test_set = [['office', 'leftD4'], ['office', 'leftD5'], ['office', 'leftD6'], 
+             ['house', 'leftD4'], ['house', 'leftD5'], ['house', 'leftD6'], 
+             ['lab', 'leftD3'], ['lab', 'leftD4'], ['lab', 'leftD5'], ['lab', 'leftD8'], 
+             ['office', 'rightD4'], ['office', 'rightD5'], ['office', 'rightD6'], 
+             ['house', 'rightD4'], ['house', 'rightD5'], ['house', 'rightD6'], 
+             ['lab', 'rightD3'], ['lab', 'rightD4'], ['lab', 'rightD5'], ['lab', 'rightD8']]
 ```
 
 ## Writeup
