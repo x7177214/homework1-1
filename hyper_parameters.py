@@ -37,12 +37,12 @@ tf.app.flags.DEFINE_integer('validation_batch_size', 10, '''Validation batch siz
 a divisor of 10000 for this task''')
 tf.app.flags.DEFINE_integer('test_batch_size', 10, '''Test batch size''')
 
+tf.app.flags.DEFINE_float('k', 0.5, '''k * loss_fa + (1-k) * loss_obj''')
 tf.app.flags.DEFINE_float('init_lr', 0.001, '''Initial learning rate''')
 tf.app.flags.DEFINE_float('lr_decay_factor', 0.001, '''How much to decay the learning rate each
 time''')
 tf.app.flags.DEFINE_integer('decay_step0', 40000, '''At which step to decay the learning rate''')
 tf.app.flags.DEFINE_integer('decay_step1', 40000, '''At which step to decay the learning rate''')
-
 
 ## The following flags define hyper-parameters modifying the training network
 tf.app.flags.DEFINE_integer('num_resnext_blocks', 3, '''How many blocks do you want,

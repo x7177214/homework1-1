@@ -60,7 +60,7 @@ class Train(object):
         # softmax cross entropy and the relularization loss
         regu_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
         # loss = self.loss(logits, self.label_placeholder)
-        loss = self.loss(logits_fa, logits_obj, self.label_placeholder_fa, self.label_placeholder_obj, k=0.5)
+        loss = self.loss(logits_fa, logits_obj, self.label_placeholder_fa, self.label_placeholder_obj, k=FLAGS.k)
         self.full_loss = tf.add_n([loss] + regu_losses)
 
         predictions_obj = tf.nn.softmax(logits_obj)
@@ -70,7 +70,7 @@ class Train(object):
 
         # Validation loss
         # self.vali_loss = self.loss(vali_logits, self.vali_label_placeholder)
-        self.vali_loss = self.loss(vali_logits_fa, vali_logits_obj, self.vali_label_placeholder_fa, self.vali_label_placeholder_obj, k=0.5)
+        self.vali_loss = self.loss(vali_logits_fa, vali_logits_obj, self.vali_label_placeholder_fa, self.vali_label_placeholder_obj, k=FLAGS.k)
         
         vali_predictions_obj = tf.nn.softmax(vali_logits_obj)
         self.vali_top1_error_obj = self.top_k_error(vali_predictions_obj, self.vali_label_placeholder_obj, 1)
@@ -96,7 +96,9 @@ class Train(object):
         saver = tf.train.Saver(tf.global_variables())
         summary_op = tf.summary.merge_all()
         init = tf.global_variables_initializer()
-        sess = tf.Session()
+        config = tf.ConfigProto()
+        config.gpu_options.allow_growth = True
+        sess = tf.Session(config=config)
 
         # If you want to load from a checkpoint
         if FLAGS.is_use_ckpt is True:
@@ -230,6 +232,7 @@ class Train(object):
                 df.to_csv(train_dir + FLAGS.version + '_error.csv')
         coord.request_stop()
         coord.join(threads)
+        return
 
 
     def test(self, test_image_array):
@@ -255,7 +258,9 @@ class Train(object):
 
         # Initialize a new session and restore a checkpoint
         saver = tf.train.Saver(tf.global_variables())
-        sess = tf.Session()
+        config = tf.ConfigProto()
+        config.gpu_options.allow_growth = True
+        sess = tf.Session(config=config)
 
         saver.restore(sess, FLAGS.test_ckpt_path)
         print 'Model restored from ', FLAGS.test_ckpt_path
