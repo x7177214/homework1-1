@@ -45,7 +45,7 @@ def create_variables(name, shape, initializer=tf.contrib.layers.xavier_initializ
     return new_variables
 
 
-def output_layer(input_layer, num_labels):
+def output_layer(input_layer, num_labels, NAME):
     '''
     Generate the output layer
     :param input_layer: 2D tensor
@@ -53,9 +53,9 @@ def output_layer(input_layer, num_labels):
     :return: output layer Y = WX + B
     '''
     input_dim = input_layer.get_shape().as_list()[-1]
-    fc_w = create_variables(name='fc_weights', shape=[input_dim, num_labels], is_fc_layer=True,
+    fc_w = create_variables(name=NAME + '_fc_weights', shape=[input_dim, num_labels], is_fc_layer=True,
                             initializer=tf.uniform_unit_scaling_initializer(factor=1.0))
-    fc_b = create_variables(name='fc_bias', shape=[num_labels], initializer=tf.zeros_initializer())
+    fc_b = create_variables(name=NAME + '_fc_bias', shape=[num_labels], initializer=tf.zeros_initializer())
 
     fc_h = tf.matmul(input_layer, fc_w) + fc_b
     return fc_h
@@ -277,14 +277,27 @@ def inference(input_tensor_batch, n, reuse):
         assert conv3.get_shape().as_list()[1:] == [IMG_HEIGHT/4, IMG_WIDTH/4, 256]
 
 
+    # with tf.variable_scope('fc', reuse=reuse):
+    #     global_pool = tf.reduce_mean(layers[-1], [1, 2])
+
+    #     assert global_pool.get_shape().as_list()[-1:] == [256]
+    #     output = output_layer(global_pool, NUM_OBJ_CLASS)
+    #     layers.append(output)
+
+    # return layers[-1]
+
     with tf.variable_scope('fc', reuse=reuse):
         global_pool = tf.reduce_mean(layers[-1], [1, 2])
 
         assert global_pool.get_shape().as_list()[-1:] == [256]
-        output = output_layer(global_pool, NUM_OBJ_CLASS)
-        layers.append(output)
 
-    return layers[-1]
+        output_obj = output_layer(global_pool, NUM_OBJ_CLASS, NAME='obj')
+        layers.append(output_obj)
+        output_fa = output_layer(global_pool, NUM_FA_CLASS, NAME='fa')
+        layers.append(output_fa)
+
+
+    return layers[-1], layers[-2]
 
 
 def test_graph(train_dir='logs'):

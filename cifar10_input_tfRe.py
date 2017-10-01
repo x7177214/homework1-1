@@ -37,9 +37,6 @@ NUM_GES_CLASS = 13
 NUM_OBJ_CLASS = 24
 
 
-# TRAIN_RANDOM_LABEL = False # Want to use random label for train data?
-# VALI_RANDOM_LABEL = False # Want to use random label for validation?
-
 # NUM_TRAIN_BATCH = 5 # How many batches of files you want to read in, from 0 to 5)
 # EPOCH_SIZE = 10000 * NUM_TRAIN_BATCH # 10000: 10000 images per TRAIN_BATCH
 TRAIN_EPOCH_SIZE = 14992
@@ -206,6 +203,14 @@ def read_validation_data():
     return validation_array, validation_labels
 
 def read_path_and_label(train_or_test_folder):
+    '''
+    input: 'train' or 'test'. Specify which folder want to read
+    output: (string, string, float, float, float)
+            [(hand_path, head_path, FA_label, ges_label, obj_label),
+             (hand_path, head_path, FA_label, ges_label, obj_label),
+             ...
+             (hand_path, head_path, FA_label, ges_label, obj_label)]
+    '''
     def find_num_files(location, cur_folder_idx):
         '''
         location: 'house', 'lab', 'office'
@@ -227,8 +232,8 @@ def read_path_and_label(train_or_test_folder):
         offset: the offset of cur_folder_idx
         '''
         
-        # root_path = '/Disk2/cedl/handcam/labels' # @ AI
-        root_path = '../dataset/labels' # @ my PC
+        root_path = '/Disk2/cedl/handcam/labels' # @ AI
+        # root_path = '../dataset/labels' # @ my PC
 
         current_path = root_path + '/' + location + '/'
         post_fix = left_or_right + str(offset + cur_folder_idx) + '.npy'
@@ -251,8 +256,8 @@ def read_path_and_label(train_or_test_folder):
     labels_obj = []
     
 
-    # root_path = '/Disk2/cedl/handcam/frames/' + train_or_test_folder # @ AI
-    root_path = '../dataset/frames/' + train_or_test_folder # @ my PC
+    root_path = '/Disk2/cedl/handcam/frames/' + train_or_test_folder # @ AI
+    # root_path = '../dataset/frames/' + train_or_test_folder # @ my PC
 
     for location, num_folders in zip(location_list, num_folders_per_location):
         for i in xrange(num_folders):
@@ -290,7 +295,7 @@ def read_in_imgs(imgs_path_list, train_or_valid):
     :return: concatenated numpy array of data. Data are in 4D arrays: [num_images,
     image_height, image_width, image_depth]
     """
-    # images = np.array([]).reshape([0, IMG_WIDTH * IMG_HEIGHT * IMG_DEPTH])
+
     images = np.array([]).reshape([0, IMG_HEIGHT, IMG_WIDTH, IMG_DEPTH])
 
     for imgs_path in imgs_path_list:
@@ -301,12 +306,6 @@ def read_in_imgs(imgs_path_list, train_or_valid):
         img = np.reshape(img, [1, IMG_HEIGHT, IMG_WIDTH, IMG_DEPTH])
         # Concatenate along axis 0 by default
         images = np.concatenate((images, img))
-
-    # num_data = len(imgs_path_list)
-    # # This reshape order is really important. Don't change
-    # # Reshape is correct. Double checked
-    # images = images.reshape((num_data, IMG_HEIGHT * IMG_WIDTH, IMG_DEPTH), order='F')
-    # images = images.reshape((num_data, IMG_HEIGHT, IMG_WIDTH, IMG_DEPTH))
 
     return images
 
@@ -352,9 +351,6 @@ def tfrecords_maker(example):
         i = i + 1
         if i % 50 ==0:
             print '%d / %d' % (i, TRAIN_EPOCH_SIZE)
-        # if i>100:
-        #     break
-
     writer.close()
 
 if __name__ == '__main__':
