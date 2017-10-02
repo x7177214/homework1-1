@@ -38,8 +38,11 @@ a divisor of 10000 for this task''')
 tf.app.flags.DEFINE_integer('test_batch_size', 4, '''Test batch size''')
 
 tf.app.flags.DEFINE_float('k', 0.5, '''k * loss_fa + (1-k) * loss_obj''')
-tf.app.flags.DEFINE_float('init_lr', 0.001, '''Initial learning rate''')
-tf.app.flags.DEFINE_float('lr_decay_factor', 0.001, '''How much to decay the learning rate each
+# tf.app.flags.DEFINE_float('init_lr', 0.001, '''Initial learning rate''')
+tf.app.flags.DEFINE_float('init_lr', 0.05, '''Initial learning rate''')
+# tf.app.flags.DEFINE_float('lr_decay_factor', 0.001, '''How much to decay the learning rate each
+# time''')
+tf.app.flags.DEFINE_float('lr_decay_factor', 4e-4, '''How much to decay the learning rate each
 time''')
 tf.app.flags.DEFINE_integer('decay_step0', 40000, '''At which step to decay the learning rate''')
 tf.app.flags.DEFINE_integer('decay_step1', 40000, '''At which step to decay the learning rate''')
@@ -64,7 +67,7 @@ training''')
 tf.app.flags.DEFINE_string('ckpt_path', 'logs_onlyhand_c=3_b=15/model.ckpt-3000', '''Checkpoint
 directory to restore to continue TRAIN''')
 
-tf.app.flags.DEFINE_string('test_ckpt_path', 'logs_onlyhand_fa+obj_c=3_b=15/model.ckpt-39500', '''Checkpoint
+tf.app.flags.DEFINE_string('test_ckpt_path', 'logs_onlyhand_fc1_fa+obj_c=3_k=0.5/model.ckpt-16500', '''Checkpoint
 directory to restore to TEST''')
 
 
