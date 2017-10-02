@@ -23,7 +23,7 @@ save
 logs and checkpoints''')
 tf.app.flags.DEFINE_integer('report_freq', 100, '''Steps takes to output errors on the screen
 and write summaries''')
-tf.app.flags.DEFINE_integer('save_freq', 500, '''Steps takes to save the current ckpt''')
+tf.app.flags.DEFINE_integer('save_freq', 200, '''Steps takes to save the current ckpt''')
 tf.app.flags.DEFINE_float('train_ema_decay', 0.95, '''The decay factor of the train error's
 moving average shown on tensorboard''')
 
