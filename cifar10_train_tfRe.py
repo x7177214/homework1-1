@@ -490,41 +490,6 @@ class Train(object):
         tf.summary.scalar('val_loss_avg', loss_val_avg)
         return val_op
 
-
-    # def full_validation(self, loss, top1_error, session, vali_data, vali_labels, batch_data,
-    #                     batch_label):
-    #     '''
-    #     Runs validation on all the 10000 valdiation images
-    #     :param loss: tensor with shape [1]
-    #     :param top1_error: tensor with shape [1]
-    #     :param session: the current tensorflow session
-    #     :param vali_data: 4D numpy array
-    #     :param vali_labels: 1D numpy array
-    #     :param batch_data: 4D numpy array. training batch to feed dict and fetch the weights
-    #     :param batch_label: 1D numpy array. training labels to feed the dict
-    #     :return: float, float
-    #     '''
-    #     num_batches = 10000 // FLAGS.validation_batch_size
-    #     order = np.random.choice(10000, num_batches * FLAGS.validation_batch_size)
-    #     vali_data_subset = vali_data[order, ...]
-    #     vali_labels_subset = vali_labels[order]
-
-    #     loss_list = []
-    #     error_list = []
-
-    #     for step in range(num_batches):
-    #         offset = step * FLAGS.validation_batch_size
-    #         feed_dict = {self.image_placeholder: batch_data, self.label_placeholder: batch_label,
-    #             self.vali_image_placeholder: vali_data_subset[offset:offset+FLAGS.validation_batch_size, ...],
-    #             self.vali_label_placeholder: vali_labels_subset[offset:offset+FLAGS.validation_batch_size],
-    #             self.lr_placeholder: FLAGS.init_lr}
-    #         loss_value, top1_error_value = session.run([loss, top1_error], feed_dict=feed_dict)
-    #         loss_list.append(loss_value)
-    #         error_list.append(top1_error_value)
-
-    #     return np.mean(loss_list), np.mean(error_list)
-
-
 def read_test_data():
     testing_img = io.imread('Image496.png')
     testing_img = skimage.transform.resize(testing_img, [IMG_HEIGHT, IMG_WIDTH], order=3, mode='reflect')
