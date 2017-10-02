@@ -44,8 +44,8 @@ tf.app.flags.DEFINE_float('init_lr', 0.05, '''Initial learning rate''')
 # time''')
 tf.app.flags.DEFINE_float('lr_decay_factor', 4e-4, '''How much to decay the learning rate each
 time''')
-tf.app.flags.DEFINE_integer('decay_step0', 40000, '''At which step to decay the learning rate''')
-tf.app.flags.DEFINE_integer('decay_step1', 40000, '''At which step to decay the learning rate''')
+# tf.app.flags.DEFINE_integer('decay_step0', 40000, '''At which step to decay the learning rate''')
+# tf.app.flags.DEFINE_integer('decay_step1', 40000, '''At which step to decay the learning rate''')
 
 ## The following flags define hyper-parameters modifying the training network
 tf.app.flags.DEFINE_integer('num_resnext_blocks', 3, '''How many blocks do you want,
