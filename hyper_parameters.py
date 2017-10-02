@@ -5,13 +5,13 @@ import tensorflow as tf
 
 FLAGS = tf.app.flags.FLAGS
 
-tf.app.flags.DEFINE_string('mode', 'test', '''train or test''')
+tf.app.flags.DEFINE_string('mode', 'test', '''Specify that the main code is for training or testing''')
 
 ## The following flags define hyper-parameters that specifically characterize ResNeXt
-
 tf.app.flags.DEFINE_integer('cardinality', 3, '''Cadinality, number of paths in each block''')
-tf.app.flags.DEFINE_integer('block_unit_depth', 64, '''the depth of each split. 64 for cifar10
+tf.app.flags.DEFINE_integer('block_unit_depth', 64, '''the depth(# filters) of each split. 64 for cifar10
 in Figure 7 of the paper''')
+tf.app.flags.DEFINE_integer('num_fc_units', 100, '''Number of neurons in the fc1 layer''')
 tf.app.flags.DEFINE_string('bottleneck_implementation', 'b', '''To use Figure 3b or 3c to
 implement''')
 
@@ -33,9 +33,9 @@ tf.app.flags.DEFINE_integer('train_steps', 40000, '''Total steps that you want t
 tf.app.flags.DEFINE_boolean('is_full_validation', False, '''Validation w/ full validation set or
 a random batch''')
 tf.app.flags.DEFINE_integer('train_batch_size', 15, '''Train batch size''')
-tf.app.flags.DEFINE_integer('validation_batch_size', 10, '''Validation batch size, better to be
+tf.app.flags.DEFINE_integer('validation_batch_size', 20, '''Validation batch size, better to be
 a divisor of 10000 for this task''')
-tf.app.flags.DEFINE_integer('test_batch_size', 10, '''Test batch size''')
+tf.app.flags.DEFINE_integer('test_batch_size', 5, '''Test batch size''')
 
 tf.app.flags.DEFINE_float('k', 0.5, '''k * loss_fa + (1-k) * loss_obj''')
 tf.app.flags.DEFINE_float('init_lr', 0.001, '''Initial learning rate''')
@@ -61,14 +61,10 @@ each side of the image''')
 tf.app.flags.DEFINE_boolean('is_use_ckpt', False, '''Whether to load a checkpoint and continue
 training''')
 
-# tf.app.flags.DEFINE_string('ckpt_path', 'logs_v0b3/model.ckpt-79999', '''Checkpoint
-# directory to restore to continue TRAIN''')
 tf.app.flags.DEFINE_string('ckpt_path', 'logs_onlyhand_c=3_b=15/model.ckpt-3000', '''Checkpoint
 directory to restore to continue TRAIN''')
 
-# tf.app.flags.DEFINE_string('test_ckpt_path', 'model_110.ckpt-79999', '''Checkpoint
-# directory to restore to TEST''')
-tf.app.flags.DEFINE_string('test_ckpt_path', 'logs_onlyhand_c=3_b=15/model.ckpt-39999', '''Checkpoint
+tf.app.flags.DEFINE_string('test_ckpt_path', 'logs_onlyhand_fa+obj_c=3_b=15/model.ckpt-39500', '''Checkpoint
 directory to restore to TEST''')
 
 

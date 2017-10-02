@@ -249,7 +249,7 @@ class Train(object):
 
         # Create the test image and labels placeholders
         self.test_image_placeholder = tf.placeholder(dtype=tf.float32, shape=[FLAGS.test_batch_size,
-                                                        IMG_HEIGHT, IMG_WIDTH, IMG_DEPTH])
+                                                        IMG_TEST_HEIGHT, IMG_TEST_WIDTH, IMG_DEPTH])
 
         # Build the test graph
         # logits = inference(self.test_image_placeholder, FLAGS.num_residual_blocks, reuse=False)
@@ -402,7 +402,7 @@ class Train(object):
                                                     min_after_dequeue=10)
         return images_hand, images_head, labels_fa, labels_ges, labels_obj
 
-    def generate_data_batch(self, data_list, batch_size, train_or_valid):
+    def generate_data_batch(self, data_list, batch_size, mode):
         '''
         [For queue loading NOT used]
         This function helps generate a batch of train data, and horizontally flip
@@ -410,7 +410,7 @@ class Train(object):
         :param train_data: 4D numpy array
         :param train_labels: 1D numpy array
         :param batch_size: int
-        :param train_or_valid: string. Indicate the data_list is train or valid data
+        :param mode: string. Indicate the data_list is for train, valid or test
         :return: augmented train batch data and labels. 4D numpy array and 1D numpy array
         '''
         offset = np.random.choice(len(data_list) - batch_size, 1)[0] # randomly choosed offset
@@ -419,8 +419,8 @@ class Train(object):
         batch_path_hand = [ele[0] for ele in batch_data]
         batch_path_head = [ele[1] for ele in batch_data]
 
-        batch_hand_imgs = read_in_imgs(batch_path_hand, train_or_valid)
-        batch_head_imgs = read_in_imgs(batch_path_head, train_or_valid)
+        batch_hand_imgs = read_in_imgs(batch_path_hand, mode)
+        batch_head_imgs = read_in_imgs(batch_path_head, mode)
 
         batch_hand_imgs = whitening_image(batch_hand_imgs)
         batch_head_imgs = whitening_image(batch_head_imgs)
@@ -541,7 +541,7 @@ if FLAGS.mode == 'test':
     print 'Prepare the testing batch data...'
     print '----------------------------'
     test_batch_hand, _, _, _, test_batch_label_obj = \
-                        train.generate_data_batch(test_data_list, NUMBER_OF_TESTING_DATA, 'valid')
+                        train.generate_data_batch(test_data_list, NUMBER_OF_TESTING_DATA, 'test')
     # Start the testing session
     prob_map = train.test(test_batch_hand)
     prediction = np.argmax(prob_map, axis=1)

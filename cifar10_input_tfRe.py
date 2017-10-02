@@ -20,7 +20,8 @@ full_data_dir = 'cifar10_data/cifar-10-batches-py/data_batch_'
 vali_dir = 'cifar10_data/cifar-10-batches-py/test_batch'
 DATA_URL = 'http://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz'
 
-SCALE_FACTOR = 10 # downsampling scale
+SCALE_FACTOR = 10 # downsampling scaling factor for training and valid
+TEST_SCALE_FACTOR = 6 # downsampling scaling factor for testing
 
 IMG_RAW_WIDTH = 1920
 IMG_RAW_HEIGHT = 1080
@@ -28,8 +29,12 @@ IMG_RAW_HEIGHT = 1080
 IMG_TMP_WIDTH = IMG_RAW_WIDTH / 2 # temporal size saved in tfrecord
 IMG_TMP_HEIGHT = IMG_RAW_HEIGHT / 2
 
+IMG_TEST_WIDTH = IMG_RAW_WIDTH / TEST_SCALE_FACTOR
+IMG_TEST_HEIGHT = IMG_RAW_HEIGHT / TEST_SCALE_FACTOR
+
 IMG_WIDTH = IMG_RAW_WIDTH / SCALE_FACTOR
 IMG_HEIGHT = IMG_RAW_HEIGHT / SCALE_FACTOR
+
 IMG_DEPTH = 3
 
 NUM_FA_CLASS = 2
@@ -217,8 +222,7 @@ def read_path_and_label(train_or_test_folder):
         cur_folder_idx: current folder index
         train_or_test_folder: choose train or test folder
         '''
-        # root_path = '/Disk2/cedl/handcam/frames/' + train_or_test_folder # @ AI
-        # # root_path = '../dataset/frames/' + train_or_test_folder
+
         current_path = root_path + '/' + location + '/' + cur_folder_idx + '/Lhand/'
         num_files = len([f for f in listdir(current_path) if isfile(join(current_path, f))])
 
@@ -287,7 +291,7 @@ def read_path_and_label(train_or_test_folder):
 
     return example
 
-def read_in_imgs(imgs_path_list, train_or_valid):
+def read_in_imgs(imgs_path_list, mode):
     """
     This function reads all training or validation data, and returns the
     images as numpy arrays
@@ -296,14 +300,38 @@ def read_in_imgs(imgs_path_list, train_or_valid):
     image_height, image_width, image_depth]
     """
 
-    images = np.array([]).reshape([0, IMG_HEIGHT, IMG_WIDTH, IMG_DEPTH])
+    # if mode is 'test':
+    #     images = np.array([]).reshape([0, IMG_TEST_HEIGHT, IMG_TEST_WIDTH, IMG_DEPTH])
+    # else: # for valid or train
+    #     images = np.array([]).reshape([0, IMG_HEIGHT, IMG_WIDTH, IMG_DEPTH])
+
+    if mode is 'test':
+        height = IMG_TEST_HEIGHT
+        width = IMG_TEST_WIDTH
+    else: # for valid or train
+        height = IMG_HEIGHT
+        width = IMG_WIDTH
+
+    images = np.array([]).reshape([0, height, width, IMG_DEPTH])
 
     for imgs_path in imgs_path_list:
         img = io.imread(imgs_path)
-        img = skimage.transform.resize(img, [IMG_HEIGHT, IMG_WIDTH], order=3, mode='reflect')
-        if train_or_valid is 'train':
+        # if mode is 'test':
+        #     img = skimage.transform.resize(img, [IMG_TEST_HEIGHT, IMG_TEST_WIDTH], order=3, mode='reflect')
+        # else: # for valid or train
+        #     img = skimage.transform.resize(img, [IMG_HEIGHT, IMG_WIDTH], order=3, mode='reflect')
+        
+        img = skimage.transform.resize(img, [height, width], order=3, mode='reflect')
+
+        if mode is 'train':
             img = horizontal_flip(image=img, axis=1) # 50% chance to flip the image when training
-        img = np.reshape(img, [1, IMG_HEIGHT, IMG_WIDTH, IMG_DEPTH])
+
+        # if mode is 'test':
+        #     img = np.reshape(img, [1, IMG_TEST_HEIGHT, IMG_TEST_WIDTH, IMG_DEPTH])
+        # else: # for valid or train
+        #     img = np.reshape(img, [1, IMG_HEIGHT, IMG_WIDTH, IMG_DEPTH])
+
+        img = np.reshape(img, [1, height, width, IMG_DEPTH])
         # Concatenate along axis 0 by default
         images = np.concatenate((images, img))
 
