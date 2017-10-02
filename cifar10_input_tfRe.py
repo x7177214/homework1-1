@@ -300,11 +300,6 @@ def read_in_imgs(imgs_path_list, mode):
     image_height, image_width, image_depth]
     """
 
-    # if mode is 'test':
-    #     images = np.array([]).reshape([0, IMG_TEST_HEIGHT, IMG_TEST_WIDTH, IMG_DEPTH])
-    # else: # for valid or train
-    #     images = np.array([]).reshape([0, IMG_HEIGHT, IMG_WIDTH, IMG_DEPTH])
-
     if mode is 'test':
         height = IMG_TEST_HEIGHT
         width = IMG_TEST_WIDTH
@@ -315,22 +310,10 @@ def read_in_imgs(imgs_path_list, mode):
     images = np.array([]).reshape([0, height, width, IMG_DEPTH])
 
     for imgs_path in imgs_path_list:
-        img = io.imread(imgs_path)
-        # if mode is 'test':
-        #     img = skimage.transform.resize(img, [IMG_TEST_HEIGHT, IMG_TEST_WIDTH], order=3, mode='reflect')
-        # else: # for valid or train
-        #     img = skimage.transform.resize(img, [IMG_HEIGHT, IMG_WIDTH], order=3, mode='reflect')
-        
+        img = io.imread(imgs_path) 
         img = skimage.transform.resize(img, [height, width], order=3, mode='reflect')
-
         if mode is 'train':
             img = horizontal_flip(image=img, axis=1) # 50% chance to flip the image when training
-
-        # if mode is 'test':
-        #     img = np.reshape(img, [1, IMG_TEST_HEIGHT, IMG_TEST_WIDTH, IMG_DEPTH])
-        # else: # for valid or train
-        #     img = np.reshape(img, [1, IMG_HEIGHT, IMG_WIDTH, IMG_DEPTH])
-
         img = np.reshape(img, [1, height, width, IMG_DEPTH])
         # Concatenate along axis 0 by default
         images = np.concatenate((images, img))
