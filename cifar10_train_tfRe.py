@@ -146,22 +146,14 @@ class Train(object):
             # Get a batch of data. (tensor data -> numpy data)
             train_batch_hand, train_batch_label_obj, train_batch_label_fa = sess.run([images_hand, labels_obj, labels_fa])       
             
+            # lr decay
+            current_lr = float(FLAGS.init_lr) * np.power(float(FLAGS.lr_decay_factor), (float(step) / float(FLAGS.train_steps)))
+            if step % FLAGS.report_freq == 0:
+                print 'Learning rate decayed to %.8f'%current_lr
+
             # Want to validate once before training. You may check the theoretical validation
             # loss first
             if step % FLAGS.report_freq == 0:
-                # if FLAGS.is_full_validation is True:
-                #     validation_loss_value, validation_error_value = self.full_validation(loss=self.vali_loss,
-                #                             top1_error=self.vali_top1_error, vali_data=vali_data,
-                #                             vali_labels=vali_labels, session=sess,
-                #                             batch_data=train_batch_data, batch_label=train_batch_labels)
-
-                #     vali_summ = tf.Summary()
-                #     vali_summ.value.add(tag='full_validation_error',
-                #                         simple_value=validation_error_value.astype(np.float))
-                #     summary_writer.add_summary(vali_summ, step)
-                #     summary_writer.flush()
-
-                # else:
                 _, validation_error_value_fa, validation_error_value_obj, validation_loss_value = sess.run([self.val_op, self.vali_top1_error_fa, self.vali_top1_error_obj, self.vali_loss],
                                             {self.image_placeholder: train_batch_hand, # train_batch_data
                                                 self.label_placeholder_obj: train_batch_label_obj, # train_batch_labels
@@ -169,7 +161,7 @@ class Train(object):
                                                 self.vali_image_placeholder: validation_batch_hand, # validation_batch_data
                                                 self.vali_label_placeholder_obj: validation_batch_label_obj, # validation_batch_labels
                                                 self.vali_label_placeholder_fa: validation_batch_label_fa, # validation_batch_labels
-                                                self.lr_placeholder: FLAGS.init_lr})
+                                                self.lr_placeholder: current_lr})
 
                 val_error_list_fa.append(validation_error_value_fa)
                 val_error_list_obj.append(validation_error_value_obj)
@@ -185,7 +177,7 @@ class Train(object):
                                 self.vali_image_placeholder: validation_batch_hand, # validation_batch_data
                                 self.vali_label_placeholder_obj: validation_batch_label_obj, # validation_batch_labels
                                 self.vali_label_placeholder_fa: validation_batch_label_fa, # validation_batch_labels
-                                self.lr_placeholder: FLAGS.init_lr})
+                                self.lr_placeholder: current_lr})
             duration = time.time() - start_time
 
 
@@ -196,7 +188,7 @@ class Train(object):
                                                     self.vali_image_placeholder: validation_batch_hand, # validation_batch_data
                                                     self.vali_label_placeholder_obj: validation_batch_label_obj, # validation_batch_labels
                                                     self.vali_label_placeholder_fa: validation_batch_label_fa, # validation_batch_labels
-                                                    self.lr_placeholder: FLAGS.init_lr})
+                                                    self.lr_placeholder: current_lr})
                 summary_writer.add_summary(summary_str, step)
 
                 num_examples_per_step = FLAGS.train_batch_size
@@ -214,10 +206,6 @@ class Train(object):
                 step_list.append(step)
                 train_error_list_fa.append(train_error_value_fa)
                 train_error_list_obj.append(train_error_value_obj)
-
-            if step == FLAGS.decay_step0 or step == FLAGS.decay_step1:
-                FLAGS.init_lr = 0.1 * FLAGS.init_lr
-                print 'Learning rate decayed to ', FLAGS.init_lr
 
             # Save checkpoints every FLAGS.save_freq steps
             if step % FLAGS.save_freq == 0 or (step + 1) == FLAGS.train_steps:
@@ -545,6 +533,9 @@ if FLAGS.mode == 'test':
         
         if i>0:
             reuse = True
+
+        if i>4:
+            break
 
         print i, NUMBER_OF_BUFFER
 
