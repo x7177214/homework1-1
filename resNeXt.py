@@ -53,9 +53,9 @@ def fc_layer(input_layer, num_labels, NAME):
     :return: output layer Y = WX + B
     '''
     input_dim = input_layer.get_shape().as_list()[-1]
-    fc_w = create_variables(name=NAME + '_weights', shape=[input_dim, num_labels], is_fc_layer=True,
+    fc_w = create_variables(name=NAME + '_fc_weights', shape=[input_dim, num_labels], is_fc_layer=True,
                             initializer=tf.uniform_unit_scaling_initializer(factor=1.0))
-    fc_b = create_variables(name=NAME + '_bias', shape=[num_labels], initializer=tf.zeros_initializer())
+    fc_b = create_variables(name=NAME + '_fc_bias', shape=[num_labels], initializer=tf.zeros_initializer())
 
     fc_h = tf.matmul(input_layer, fc_w) + fc_b
     return fc_h
@@ -273,9 +273,9 @@ def inference(input_tensor_batch, n, reuse):
         with tf.variable_scope('conv3_%d' %i, reuse=reuse):
             conv3 = resnext_block(layers[-1], 256)
             layers.append(conv3)
-        # Insure that the shape is as expected
         # assert conv3.get_shape().as_list()[1:] == [8, 8, 256]
-        # assert conv3.get_shape().as_list()[1:] == [IMG_HEIGHT/4, IMG_WIDTH/4, 256]
+        assert conv3.get_shape().as_list()[1:] == [IMG_HEIGHT/4, IMG_WIDTH/4, 256]
+
 
     # with tf.variable_scope('fc', reuse=reuse):
     #     global_pool = tf.reduce_mean(layers[-1], [1, 2])
@@ -287,22 +287,15 @@ def inference(input_tensor_batch, n, reuse):
     # return layers[-1]
 
     with tf.variable_scope('fc', reuse=reuse):
-        '''
-        256 -> FLAGS.num_fc_units -> NUM_FA_CLASS
-                                  -> NUM_OBJ_CLASS
-        '''
         global_pool = tf.reduce_mean(layers[-1], [1, 2])
+
         assert global_pool.get_shape().as_list()[-1:] == [256]
 
-        global_pool = fc_layer(global_pool, FLAGS.num_fc_units, NAME='fc_1')
-        global_pool = tf.nn.relu(global_pool)
-        layers.append(global_pool)
-
-        output_obj = fc_layer(global_pool, NUM_OBJ_CLASS, NAME='fc_obj')
+        output_obj = fc_layer(global_pool, NUM_OBJ_CLASS, NAME='obj')
         layers.append(output_obj)
-
-        output_fa = fc_layer(global_pool, NUM_FA_CLASS, NAME='fc_fa')
+        output_fa = fc_layer(global_pool, NUM_FA_CLASS, NAME='fa')
         layers.append(output_fa)
+
 
     return layers[-1], layers[-2]
 
