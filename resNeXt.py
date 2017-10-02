@@ -274,7 +274,7 @@ def inference(input_tensor_batch, n, reuse):
             conv3 = resnext_block(layers[-1], 256)
             layers.append(conv3)
         # assert conv3.get_shape().as_list()[1:] == [8, 8, 256]
-        assert conv3.get_shape().as_list()[1:] == [IMG_HEIGHT/4, IMG_WIDTH/4, 256]
+        # assert conv3.get_shape().as_list()[1:] == [IMG_HEIGHT/4, IMG_WIDTH/4, 256]
 
 
     # with tf.variable_scope('fc', reuse=reuse):

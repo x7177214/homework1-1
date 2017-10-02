@@ -235,7 +235,7 @@ class Train(object):
         return
 
 
-    def test(self, test_image_array):
+    def test(self, test_image_array, REUSE=False):
         '''
         This function is used to evaluate the test data. Please finish pre-precessing in advance
         :param test_image_array: 4D numpy array with shape [num_test_images, img_height, img_width,
@@ -253,7 +253,7 @@ class Train(object):
 
         # Build the test graph
         # logits = inference(self.test_image_placeholder, FLAGS.num_residual_blocks, reuse=False)
-        logits_fa, logits_obj = inference(self.test_image_placeholder, FLAGS.num_resnext_blocks, reuse=False)
+        logits_fa, logits_obj = inference(self.test_image_placeholder, FLAGS.num_resnext_blocks, reuse=REUSE)
         predictions = tf.nn.softmax(logits_obj)
 
         # Initialize a new session and restore a checkpoint
@@ -402,7 +402,7 @@ class Train(object):
                                                     min_after_dequeue=10)
         return images_hand, images_head, labels_fa, labels_ges, labels_obj
 
-    def generate_data_batch(self, data_list, batch_size, mode):
+    def generate_data_batch(self, data_list, batch_size, mode, offset = 0):
         '''
         [For queue loading NOT used]
         This function helps generate a batch of train data, and horizontally flip
@@ -413,8 +413,11 @@ class Train(object):
         :param mode: string. Indicate the data_list is for train, valid or test
         :return: augmented train batch data and labels. 4D numpy array and 1D numpy array
         '''
-        offset = np.random.choice(len(data_list) - batch_size, 1)[0] # randomly choosed offset
-        batch_data = data_list[offset:offset+batch_size]
+        if mode is 'test':
+            batch_data = data_list[offset:offset+batch_size]
+        else:
+            offset = np.random.choice(len(data_list) - batch_size, 1)[0] # randomly choosed offset
+            batch_data = data_list[offset:offset+batch_size]
 
         batch_path_hand = [ele[0] for ele in batch_data]
         batch_path_head = [ele[1] for ele in batch_data]
@@ -534,8 +537,8 @@ train = Train()
 print 'MODE: ' + FLAGS.mode +'ing'
 
 if FLAGS.mode == 'test':
+    '''
     # Read testing data
-    # testing_img = read_test_data()
     NUMBER_OF_TESTING_DATA = 100
     test_data_list = read_path_and_label('test')
     print 'Prepare the testing batch data...'
@@ -551,6 +554,49 @@ if FLAGS.mode == 'test':
             cnt = cnt + 1.0
     accuracy = float(cnt) / float(len(test_batch_label_obj))
     print accuracy
+    '''
+
+    # Read testing data
+    BUFFER_SIZE = 100
+    test_data_list = read_path_and_label('test')
+    print 'Prepare the testing batch data...'
+    print '----------------------------'
+
+    NUMBER_OF_BUFFER = len(test_data_list) / BUFFER_SIZE
+    REMINDER = len(test_data_list) % BUFFER_SIZE
+
+    reuse = False
+    cnt = 0.0
+    for i in xrange(NUMBER_OF_BUFFER+1):
+        if i == NUMBER_OF_BUFFER:
+            if REMINDER == 0:
+                break
+            else:
+                offset = NUMBER_OF_BUFFER * BUFFER_SIZE
+                batch_size = REMINDER
+        else:
+            offset = i * BUFFER_SIZE
+            batch_size = BUFFER_SIZE
+        
+        if i>0:
+            reuse = True
+
+        print i, NUMBER_OF_BUFFER
+
+        test_batch_hand, _, _, _, test_batch_label_obj = \
+                            train.generate_data_batch(test_data_list, batch_size, 'test', offset)
+        # Start the testing session
+        prob_map = train.test(test_batch_hand, reuse)
+        prediction = np.argmax(prob_map, axis=1)
+        for pred, label in zip(prediction, test_batch_label_obj):
+            if int(pred)==int(label):
+                cnt = cnt + 1.0
+
+        print float(cnt) / float(BUFFER_SIZE) / float(i+1)
+
+    accuracy = float(cnt) / float(len(test_data_list))
+    print accuracy
+
 else:
     # Start the training session
     train.train()

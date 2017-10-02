@@ -35,7 +35,7 @@ a random batch''')
 tf.app.flags.DEFINE_integer('train_batch_size', 15, '''Train batch size''')
 tf.app.flags.DEFINE_integer('validation_batch_size', 20, '''Validation batch size, better to be
 a divisor of 10000 for this task''')
-tf.app.flags.DEFINE_integer('test_batch_size', 5, '''Test batch size''')
+tf.app.flags.DEFINE_integer('test_batch_size', 4, '''Test batch size''')
 
 tf.app.flags.DEFINE_float('k', 0.5, '''k * loss_fa + (1-k) * loss_obj''')
 tf.app.flags.DEFINE_float('init_lr', 0.001, '''Initial learning rate''')
