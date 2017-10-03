@@ -8,7 +8,7 @@ FLAGS = tf.app.flags.FLAGS
 tf.app.flags.DEFINE_string('mode', 'test', '''Specify that the main code is for training or testing''')
 
 ## The following flags define hyper-parameters that specifically characterize ResNeXt
-tf.app.flags.DEFINE_integer('cardinality', 3, '''Cadinality, number of paths in each block''')
+tf.app.flags.DEFINE_integer('cardinality', 2, '''Cadinality, number of paths in each block''')
 tf.app.flags.DEFINE_integer('block_unit_depth', 64, '''the depth(# filters) of each split. 64 for cifar10
 in Figure 7 of the paper''')
 tf.app.flags.DEFINE_integer('num_fc_units', 100, '''Number of neurons in the fc1 layer''')
@@ -24,6 +24,7 @@ logs and checkpoints''')
 tf.app.flags.DEFINE_integer('report_freq', 200, '''Steps takes to output errors on the screen
 and write summaries''')
 tf.app.flags.DEFINE_integer('save_freq', 200, '''Steps takes to save the current ckpt''')
+tf.app.flags.DEFINE_integer('max_to_keep', 100, '''Max # ckpt to keep''')
 tf.app.flags.DEFINE_float('train_ema_decay', 0.95, '''The decay factor of the train error's
 moving average shown on tensorboard''')
 
@@ -32,10 +33,11 @@ moving average shown on tensorboard''')
 tf.app.flags.DEFINE_integer('train_steps', 40000, '''Total steps that you want to train''')
 tf.app.flags.DEFINE_boolean('is_full_validation', False, '''Validation w/ full validation set or
 a random batch''')
-tf.app.flags.DEFINE_integer('train_batch_size', 15, '''Train batch size''')
+tf.app.flags.DEFINE_integer('train_batch_size', 30, '''Train batch size''')
 tf.app.flags.DEFINE_integer('validation_batch_size', 20, '''Validation batch size, better to be
 a divisor of 10000 for this task''')
 tf.app.flags.DEFINE_integer('test_batch_size', 4, '''Test batch size''')
+
 
 tf.app.flags.DEFINE_float('k', 0.5, '''k * loss_fa + (1-k) * loss_obj''')
 # tf.app.flags.DEFINE_float('init_lr', 0.001, '''Initial learning rate''')
@@ -44,11 +46,9 @@ tf.app.flags.DEFINE_float('init_lr', 0.05, '''Initial learning rate''')
 # time''')
 tf.app.flags.DEFINE_float('lr_decay_factor', 4e-4, '''How much to decay the learning rate each
 time''')
-# tf.app.flags.DEFINE_integer('decay_step0', 40000, '''At which step to decay the learning rate''')
-# tf.app.flags.DEFINE_integer('decay_step1', 40000, '''At which step to decay the learning rate''')
 
 ## The following flags define hyper-parameters modifying the training network
-tf.app.flags.DEFINE_integer('num_resnext_blocks', 3, '''How many blocks do you want,
+tf.app.flags.DEFINE_integer('num_resnext_blocks', 2, '''How many blocks do you want,
 total layers = 3n + 2, the paper used n=3, 29 layers, as demo''')
 tf.app.flags.DEFINE_float('weight_decay', 0.0007, '''scale for l2 regularization''')
 
@@ -61,10 +61,10 @@ each side of the image''')
 
 ## If you want to load a checkpoint and continue training
 
-tf.app.flags.DEFINE_boolean('is_use_ckpt', False, '''Whether to load a checkpoint and continue
+tf.app.flags.DEFINE_boolean('is_use_ckpt', True, '''Whether to load a checkpoint and continue
 training''')
 
-tf.app.flags.DEFINE_string('ckpt_path', 'logs_onlyhand_c=3_b=15/model.ckpt-3000', '''Checkpoint
+tf.app.flags.DEFINE_string('ckpt_path', 'logs_oh,mfc_c=2_d=64_n=2_lr=0.05_lrd=0.0004_wd=0.0007_k=0.5/model.ckpt-17800', '''Checkpoint
 directory to restore to continue TRAIN''')
 
 tf.app.flags.DEFINE_string('test_ckpt_path', 'logs_onlyhand_fc1_fa+obj_c=3_k=0.5_lr=0.05/model.ckpt-39800', '''Checkpoint
@@ -79,6 +79,6 @@ lr_curve_file_name = 'c='+str(FLAGS.cardinality) + '_'\
     'wd='+str(FLAGS.weight_decay) + '_'\
     'k='+str(FLAGS.k)
 lr_curve_file_name = FLAGS.version + '_' + lr_curve_file_name
-
-
 train_dir = 'logs_' + lr_curve_file_name + '/'
+
+

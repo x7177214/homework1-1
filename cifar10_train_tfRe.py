@@ -93,7 +93,7 @@ class Train(object):
 
         # Initialize a saver to save checkpoints. Merge all summaries, so we can run all
         # summarizing operations by running summary_op. Initialize a new session
-        saver = tf.train.Saver(tf.global_variables())
+        saver = tf.train.Saver(tf.global_variables(), max_to_keep=FLAGS.max_to_keep)
         summary_op = tf.summary.merge_all()
         init = tf.global_variables_initializer()
         config = tf.ConfigProto()
