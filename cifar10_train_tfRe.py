@@ -112,7 +112,14 @@ class Train(object):
 
         # This summary writer object helps write summaries on tensorboard
         summary_writer = tf.summary.FileWriter(train_dir, sess.graph)
-
+        lr_curve_file_name = 'c='+str(FLAGS.cardinality) + '_'\
+        'd='+str(FLAGS.block_unit_depth) + '_'\
+        'n='+str(FLAGS.num_resnext_blocks) + '_'\
+        'lr='+str(FLAGS.init_lr) + '_'\
+        'lrd='+str(FLAGS.lr_decay_factor) + '_'\
+        'wd='+str(FLAGS.weight_decay) + '_'\
+        'k='+str(FLAGS.k)
+        lr_curve_file_name = FLAGS.version + '_' + lr_curve_file_name
 
         # These lists are used to save a csv file at last
         step_list = []
@@ -217,7 +224,7 @@ class Train(object):
                                 'validation_error_obj': val_error_list_obj,
                                 'train_error_fa':train_error_list_fa,
                                 'validation_error_fa': val_error_list_fa})
-                df.to_csv(train_dir + FLAGS.version + '_error.csv')
+                df.to_csv(train_dir + lr_curve_file_name + '_error.csv')
         coord.request_stop()
         coord.join(threads)
         return
@@ -284,20 +291,6 @@ class Train(object):
 
         return prediction_array
 
-
-    ## Helper functions
-    # def loss(self, logits, labels):
-    #     '''
-    #     Calculate the cross entropy loss given logits and true labels
-    #     :param logits: 2D tensor with shape [batch_size, num_labels]
-    #     :param labels: 1D tensor with shape [batch_size]
-    #     :return: loss tensor with shape [1]
-    #     '''
-    #     labels = tf.cast(labels, tf.int64)
-    #     cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=logits, labels=labels,
-    #                                                                    name='cross_entropy_per_example')
-    #     cross_entropy_mean = tf.reduce_mean(cross_entropy, name='cross_entropy')
-    #     return cross_entropy_mean
 
     def loss(self, logits1, logits2, labels1, labels2, k=0.5):
         '''
@@ -537,7 +530,7 @@ if FLAGS.mode == 'test':
         if i>4:
             break
 
-        print i, NUMBER_OF_BUFFER
+        print 'current step:%d, total step:%d'%(i, NUMBER_OF_BUFFER)
 
         test_batch_hand, _, _, _, test_batch_label_obj = \
                             train.generate_data_batch(test_data_list, batch_size, 'test', offset)

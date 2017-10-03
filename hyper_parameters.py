@@ -21,7 +21,7 @@ implement''')
 tf.app.flags.DEFINE_string('version', 'v0b3_cont', '''A version number defining the directory to
 save
 logs and checkpoints''')
-tf.app.flags.DEFINE_integer('report_freq', 100, '''Steps takes to output errors on the screen
+tf.app.flags.DEFINE_integer('report_freq', 200, '''Steps takes to output errors on the screen
 and write summaries''')
 tf.app.flags.DEFINE_integer('save_freq', 200, '''Steps takes to save the current ckpt''')
 tf.app.flags.DEFINE_float('train_ema_decay', 0.95, '''The decay factor of the train error's
@@ -67,8 +67,18 @@ training''')
 tf.app.flags.DEFINE_string('ckpt_path', 'logs_onlyhand_c=3_b=15/model.ckpt-3000', '''Checkpoint
 directory to restore to continue TRAIN''')
 
-tf.app.flags.DEFINE_string('test_ckpt_path', 'logs_onlyhand_fc1_fa+obj_c=3_k=0.5/model.ckpt-16500', '''Checkpoint
+tf.app.flags.DEFINE_string('test_ckpt_path', 'logs_onlyhand_fc1_fa+obj_c=3_k=0.5_lr=0.05/model.ckpt-39800', '''Checkpoint
 directory to restore to TEST''')
 
 
-train_dir = 'logs_' + FLAGS.version + '/'
+lr_curve_file_name = 'c='+str(FLAGS.cardinality) + '_'\
+    'd='+str(FLAGS.block_unit_depth) + '_'\
+    'n='+str(FLAGS.num_resnext_blocks) + '_'\
+    'lr='+str(FLAGS.init_lr) + '_'\
+    'lrd='+str(FLAGS.lr_decay_factor) + '_'\
+    'wd='+str(FLAGS.weight_decay) + '_'\
+    'k='+str(FLAGS.k)
+lr_curve_file_name = FLAGS.version + '_' + lr_curve_file_name
+
+
+train_dir = 'logs_' + lr_curve_file_name + '/'
