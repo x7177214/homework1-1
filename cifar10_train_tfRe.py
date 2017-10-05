@@ -406,8 +406,8 @@ class Train(object):
         batch_hand_imgs = read_in_imgs(batch_path_hand, mode)
         batch_head_imgs = read_in_imgs(batch_path_head, mode)
 
-        batch_hand_imgs = whitening_image(batch_hand_imgs)
-        batch_head_imgs = whitening_image(batch_head_imgs)
+        batch_hand_imgs = whitening_image(batch_hand_imgs, mode)
+        batch_head_imgs = whitening_image(batch_head_imgs, mode)
 
         batch_label_fa = [ele[2] for ele in batch_data]
         batch_label_ges = [ele[3] for ele in batch_data]
@@ -527,8 +527,8 @@ if FLAGS.mode == 'test':
         if i>0:
             reuse = True
 
-        if i>4:
-            break
+        # if i>4:
+        #     break
 
         print 'current step:%d, total step:%d'%(i, NUMBER_OF_BUFFER)
 

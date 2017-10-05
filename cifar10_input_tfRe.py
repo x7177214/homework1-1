@@ -143,7 +143,7 @@ def horizontal_flip(image, axis):
     return image
 
 
-def whitening_image(image_np):
+def whitening_image(image_np, mode='test'):
     '''
     Performs per_image_whitening
     :param image_np: a 4D numpy array representing a batch of images
@@ -152,7 +152,10 @@ def whitening_image(image_np):
     for i in range(len(image_np)):
         mean = np.mean(image_np[i, ...])
         # Use adjusted standard deviation here, in case the std == 0.
-        std = np.max([np.std(image_np[i, ...]), 1.0/np.sqrt(IMG_HEIGHT * IMG_WIDTH * IMG_DEPTH)])
+        if mode is 'test':
+            std = np.max([np.std(image_np[i, ...]), 1.0/np.sqrt(IMG_TEST_HEIGHT * IMG_TEST_WIDTH * IMG_DEPTH)])
+        else:
+            std = np.max([np.std(image_np[i, ...]), 1.0/np.sqrt(IMG_HEIGHT * IMG_WIDTH * IMG_DEPTH)])
         image_np[i,...] = (image_np[i, ...] - mean) / std
     return image_np
 
