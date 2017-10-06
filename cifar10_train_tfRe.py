@@ -59,8 +59,11 @@ class Train(object):
         # The following codes calculate the train loss, which is consist of the
         # softmax cross entropy and the relularization loss
         regu_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
-        # loss = self.loss(logits, self.label_placeholder)
-        loss = self.loss(logits_fa, logits_obj, self.label_placeholder_fa, self.label_placeholder_obj, k=FLAGS.k)
+
+
+        self.loss_fa = self.loss(logits_fa, self.label_placeholder_fa, 'train_fa')
+        self.loss_obj = self.loss(logits_obj, self.label_placeholder_obj, 'train_obj')
+        loss = FLAGS.k * self.loss_fa + (1.0-FLAGS.k) * self.loss_obj
         self.full_loss = tf.add_n([loss] + regu_losses)
 
         predictions_obj = tf.nn.softmax(logits_obj)
@@ -68,10 +71,11 @@ class Train(object):
         predictions_fa = tf.nn.softmax(logits_fa)
         self.train_top1_error_fa = self.top_k_error(predictions_fa, self.label_placeholder_fa, 1)
 
-        # Validation loss
-        # self.vali_loss = self.loss(vali_logits, self.vali_label_placeholder)
-        self.vali_loss = self.loss(vali_logits_fa, vali_logits_obj, self.vali_label_placeholder_fa, self.vali_label_placeholder_obj, k=FLAGS.k)
-        
+        # Validation loss 
+        self.vali_loss_fa = self.loss(vali_logits_fa, self.vali_label_placeholder_fa, 'val_fa')
+        self.vali_loss_obj= self.loss(vali_logits_obj, self.vali_label_placeholder_obj, 'val_obj')
+        self.vali_loss = FLAGS.k * self.vali_loss_fa + (1.0-FLAGS.k) * self.vali_loss_obj
+
         vali_predictions_obj = tf.nn.softmax(vali_logits_obj)
         self.vali_top1_error_obj = self.top_k_error(vali_predictions_obj, self.vali_label_placeholder_obj, 1)
         vali_predictions_fa = tf.nn.softmax(vali_logits_fa)
@@ -80,8 +84,6 @@ class Train(object):
         self.train_op, self.train_ema_op = self.train_operation(global_step, self.full_loss,
                                                                 self.train_top1_error_obj)
         self.val_op = self.validation_op(validation_step, self.vali_top1_error_obj, self.vali_loss)
-
-
 
     def train(self):
         '''
@@ -128,6 +130,11 @@ class Train(object):
         val_error_list_fa = []
         val_error_list_obj = []
 
+        train_loss_list_fa = []
+        train_loss_list_obj = []
+        val_loss_list_fa = []
+        val_loss_list_obj = []
+
         # Prepare the validation batch data
         print 'Prepare the validation batch data...'
         print '----------------------------'
@@ -161,8 +168,8 @@ class Train(object):
             # Want to validate once before training. You may check the theoretical validation
             # loss first
             if step % FLAGS.report_freq == 0:
-                _, validation_error_value_fa, validation_error_value_obj, validation_loss_value = sess.run([self.val_op, self.vali_top1_error_fa, self.vali_top1_error_obj, self.vali_loss],
-                                            {self.image_placeholder: train_batch_hand, # train_batch_data
+                _, validation_error_value_fa, validation_error_value_obj, validation_loss_value, valid_loss_fa, valid_loss_obj = sess.run([self.val_op, self.vali_top1_error_fa, self.vali_top1_error_obj, self.vali_loss, self.vali_loss_fa, self.vali_loss_obj],
+                                                {self.image_placeholder: train_batch_hand, # train_batch_data
                                                 self.label_placeholder_obj: train_batch_label_obj, # train_batch_labels
                                                 self.label_placeholder_fa: train_batch_label_fa, # train_batch_labels
                                                 self.vali_image_placeholder: validation_batch_hand, # validation_batch_data
@@ -170,14 +177,18 @@ class Train(object):
                                                 self.vali_label_placeholder_fa: validation_batch_label_fa, # validation_batch_labels
                                                 self.lr_placeholder: current_lr})
 
+                valid_loss_fa = valid_loss_fa * FLAGS.k
+                valid_loss_obj = valid_loss_obj * (1.0-FLAGS.k)
+
                 val_error_list_fa.append(validation_error_value_fa)
                 val_error_list_obj.append(validation_error_value_obj)
-
+                val_loss_list_fa.append(valid_loss_fa)
+                val_loss_list_obj.append(valid_loss_obj)
 
             start_time = time.time()
 
-            _, _, train_loss_value, train_error_value_fa, train_error_value_obj = sess.run([self.train_op, self.train_ema_op,
-                                                           self.full_loss, self.train_top1_error_fa, self.train_top1_error_obj],
+            _, _, train_loss_value, train_error_value_fa, train_error_value_obj, train_loss_fa, train_loss_obj = sess.run([self.train_op, self.train_ema_op,
+                                                           self.full_loss, self.train_top1_error_fa, self.train_top1_error_obj, self.loss_fa, self.loss_obj],
                                 {self.image_placeholder: train_batch_hand, # train_batch_data
                                 self.label_placeholder_obj: train_batch_label_obj, # train_batch_labels
                                 self.label_placeholder_fa: train_batch_label_fa, # train_batch_labels
@@ -185,6 +196,9 @@ class Train(object):
                                 self.vali_label_placeholder_obj: validation_batch_label_obj, # validation_batch_labels
                                 self.vali_label_placeholder_fa: validation_batch_label_fa, # validation_batch_labels
                                 self.lr_placeholder: current_lr})
+            train_loss_fa = train_loss_fa * FLAGS.k
+            train_loss_obj = train_loss_obj * (1.0-FLAGS.k)
+            
             duration = time.time() - start_time
 
 
@@ -202,17 +216,19 @@ class Train(object):
                 examples_per_sec = num_examples_per_step / duration
                 sec_per_batch = float(duration)
 
-                format_str = ('%s: step %d, loss = %.4f (%.1f examples/sec; %.3f ' 'sec/batch)')
-                print format_str % (datetime.now(), step, train_loss_value, examples_per_sec,
+                format_str = ('%s: step %d, total_loss = %.4f, obj_loss = %.4f, fa_loss = %.4f (%.1f examples/sec; %.3f ' 'sec/batch)')
+                print format_str % (datetime.now(), step, train_loss_value, train_loss_obj, train_loss_fa, examples_per_sec,
                                     sec_per_batch)
                 print 'Train top1 error-> OBJ: %.2f'%train_error_value_obj, ', FA: %.2f'%train_error_value_fa
                 print 'Validation top1 error-> OBJ: %.2f'%validation_error_value_obj, ', FA: %.2f'%validation_error_value_fa
-                print 'Validation loss = ', validation_loss_value
+                print 'Validation total_loss = %.4f, obj_loss = %.4f, fa_loss = %.4f'%(validation_loss_value, valid_loss_obj, valid_loss_fa)
                 print '----------------------------'
 
                 step_list.append(step)
                 train_error_list_fa.append(train_error_value_fa)
                 train_error_list_obj.append(train_error_value_obj)
+                train_loss_list_fa.append(train_loss_fa)
+                train_loss_list_obj.append(train_loss_obj)
 
             # Save checkpoints every FLAGS.save_freq steps
             if step % FLAGS.save_freq == 0 or (step + 1) == FLAGS.train_steps:
@@ -223,7 +239,11 @@ class Train(object):
                                 'train_error_obj':train_error_list_obj,
                                 'validation_error_obj': val_error_list_obj,
                                 'train_error_fa':train_error_list_fa,
-                                'validation_error_fa': val_error_list_fa})
+                                'validation_error_fa': val_error_list_fa,
+                                'train_loss_fa':train_loss_list_fa,
+                                'train_loss_obj':train_loss_list_obj,
+                                'validation_loss_fa':val_loss_list_fa,
+                                'validation_loss_obj':val_loss_list_obj})
                 df.to_csv(train_dir + lr_curve_file_name + '_error.csv')
         coord.request_stop()
         coord.join(threads)
@@ -247,7 +267,6 @@ class Train(object):
                                                         IMG_TEST_HEIGHT, IMG_TEST_WIDTH, IMG_DEPTH])
 
         # Build the test graph
-        # logits = inference(self.test_image_placeholder, FLAGS.num_residual_blocks, reuse=False)
         logits_fa, logits_obj = inference(self.test_image_placeholder, FLAGS.num_resnext_blocks, reuse=REUSE)
         predictions = tf.nn.softmax(logits_obj)
 
@@ -278,7 +297,6 @@ class Train(object):
             self.test_image_placeholder = tf.placeholder(dtype=tf.float32, shape=[remain_images,
                                                         IMG_HEIGHT, IMG_WIDTH, IMG_DEPTH])
             # Build the test graph
-            # logits = inference(self.test_image_placeholder, FLAGS.num_residual_blocks, reuse=True)
             logits_fa, logits_obj = inference(self.test_image_placeholder, FLAGS.num_resnext_blocks, reuse=False)
             predictions = tf.nn.softmax(logits_obj)
 
@@ -291,25 +309,19 @@ class Train(object):
 
         return prediction_array
 
-
-    def loss(self, logits1, logits2, labels1, labels2, k=0.5):
+    def loss(self, logits, labels, task):
         '''
-        Calculate the cross entropy loss given logits and true labels (multi-task)
+        Calculate the cross entropy loss given logits and true labels
         :param logits: 2D tensor with shape [batch_size, num_labels]
         :param labels: 1D tensor with shape [batch_size]
-        :param k: weight between loss1 and loss2
+        :param task: obj or fa or ges
         :return: loss tensor with shape [1]
         '''
-        labels1 = tf.cast(labels1, tf.int64)
-        labels2 = tf.cast(labels2, tf.int64)
-        cross_entropy1 = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=logits1, labels=labels1,
-                                                                       name='cross_entropy_per_example_1')
-        cross_entropy_mean1 = tf.reduce_mean(cross_entropy1, name='cross_entropy_1')
-        cross_entropy2 = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=logits2, labels=labels2,
-                                                                       name='cross_entropy_per_example_2')
-        cross_entropy_mean2 = tf.reduce_mean(cross_entropy2, name='cross_entropy_2')
-        return k * cross_entropy_mean1 + (1-k) * cross_entropy_mean2
-
+        labels = tf.cast(labels, tf.int64)
+        cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=logits, labels=labels,
+                                                                       name='cross_entropy_per_example_' + task)
+        cross_entropy_mean = tf.reduce_mean(cross_entropy, name='cross_entropy_' + task)
+        return cross_entropy_mean
 
     def top_k_error(self, predictions, labels, k):
         '''
@@ -471,11 +483,6 @@ class Train(object):
         tf.summary.scalar('val_loss_avg', loss_val_avg)
         return val_op
 
-def read_test_data():
-    testing_img = io.imread('Image496.png')
-    testing_img = skimage.transform.resize(testing_img, [IMG_HEIGHT, IMG_WIDTH], order=3, mode='reflect')
-    testing_img = np.reshape(testing_img, [1, testing_img.shape[0], testing_img.shape[1], testing_img.shape[2]])
-    return testing_img
 
 # Initialize the Train object
 train = Train()
@@ -483,25 +490,6 @@ train = Train()
 print 'MODE: ' + FLAGS.mode +'ing'
 
 if FLAGS.mode == 'test':
-    '''
-    # Read testing data
-    NUMBER_OF_TESTING_DATA = 100
-    test_data_list = read_path_and_label('test')
-    print 'Prepare the testing batch data...'
-    print '----------------------------'
-    test_batch_hand, _, _, _, test_batch_label_obj = \
-                        train.generate_data_batch(test_data_list, NUMBER_OF_TESTING_DATA, 'test')
-    # Start the testing session
-    prob_map = train.test(test_batch_hand)
-    prediction = np.argmax(prob_map, axis=1)
-    cnt = 0.0
-    for pred, label in zip(prediction, test_batch_label_obj):
-        if int(pred)==int(label):
-            cnt = cnt + 1.0
-    accuracy = float(cnt) / float(len(test_batch_label_obj))
-    print accuracy
-    '''
-
     # Read testing data
     BUFFER_SIZE = 100
     test_data_list = read_path_and_label('test')
@@ -531,9 +519,9 @@ if FLAGS.mode == 'test':
         #     break
 
         print 'current step:%d, total step:%d'%(i, NUMBER_OF_BUFFER)
-
         test_batch_hand, _, _, _, test_batch_label_obj = \
                             train.generate_data_batch(test_data_list, batch_size, 'test', offset)
+        print 'batch is ready'
         # Start the testing session
         prob_map = train.test(test_batch_hand, reuse)
         prediction = np.argmax(prob_map, axis=1)

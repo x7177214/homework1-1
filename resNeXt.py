@@ -277,31 +277,25 @@ def inference(input_tensor_batch, n, reuse):
         # assert conv3.get_shape().as_list()[1:] == [8, 8, 256]
         # assert conv3.get_shape().as_list()[1:] == [IMG_HEIGHT/4, IMG_WIDTH/4, 256]
 
-    # with tf.variable_scope('fc', reuse=reuse):
-    #     global_pool = tf.reduce_mean(layers[-1], [1, 2])
-
-    #     assert global_pool.get_shape().as_list()[-1:] == [256]
-    #     output = fc_layer(global_pool, NUM_OBJ_CLASS)
-    #     layers.append(output)
-
-    # return layers[-1]
-
     with tf.variable_scope('fc', reuse=reuse):
         '''
         256 -> FLAGS.num_fc_units -> NUM_FA_CLASS
-                                  -> NUM_OBJ_CLASS
+            -> FLAGS.num_fc_units -> NUM_OBJ_CLASS
         '''
         global_pool = tf.reduce_mean(layers[-1], [1, 2])
         assert global_pool.get_shape().as_list()[-1:] == [256]
 
-        global_pool = fc_layer(global_pool, FLAGS.num_fc_units, NAME='fc_1')
-        global_pool = tf.nn.relu(global_pool)
-        layers.append(global_pool)
+        fc_obj_layer = fc_layer(global_pool, FLAGS.num_fc_units, NAME='fc1_obj')
+        fc_obj_layer = tf.nn.relu(fc_obj_layer)
+        layers.append(fc_obj_layer)
+        output_obj = fc_layer(fc_obj_layer, NUM_OBJ_CLASS, NAME='fc2_obj')
 
-        output_obj = fc_layer(global_pool, NUM_OBJ_CLASS, NAME='fc_obj')
+        fc_fa_layer = fc_layer(global_pool, FLAGS.num_fc_units, NAME='fc1_fa')
+        fc_fa_layer = tf.nn.relu(fc_fa_layer)
+        layers.append(fc_fa_layer)
+        output_fa = fc_layer(fc_fa_layer, NUM_FA_CLASS, NAME='fc2_fa')
+
         layers.append(output_obj)
-
-        output_fa = fc_layer(global_pool, NUM_FA_CLASS, NAME='fc_fa')
         layers.append(output_fa)
 
     return layers[-1], layers[-2]
