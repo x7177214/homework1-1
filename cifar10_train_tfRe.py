@@ -483,6 +483,48 @@ class Train(object):
         tf.summary.scalar('val_loss_avg', loss_val_avg)
         return val_op
 
+    def cal_accu_on_testing(self):
+        # Read testing data
+        BUFFER_SIZE = 100
+        test_data_list = read_path_and_label('test')
+        print 'Prepare the testing batch data...'
+        print '----------------------------'
+
+        NUMBER_OF_BUFFER = len(test_data_list) / BUFFER_SIZE
+        REMINDER = len(test_data_list) % BUFFER_SIZE
+
+        reuse = False
+        cnt = 0.0
+        for i in xrange(NUMBER_OF_BUFFER+1):
+            if i == NUMBER_OF_BUFFER:
+                if REMINDER == 0:
+                    break
+                else:
+                    offset = NUMBER_OF_BUFFER * BUFFER_SIZE
+                    batch_size = REMINDER
+            else:
+                offset = i * BUFFER_SIZE
+                batch_size = BUFFER_SIZE
+            
+            if i>0:
+                reuse = True
+
+            # if i>4:
+            #     break
+
+            print 'current step:%d, total step:%d'%(i, NUMBER_OF_BUFFER)
+            test_batch_hand, _, _, _, test_batch_label_obj = \
+                                self.generate_data_batch(test_data_list, batch_size, 'test', offset)
+            print 'batch is ready'
+            # Start the testing session
+            prob_map = self.test(test_batch_hand, reuse)
+            prediction = np.argmax(prob_map, axis=1)
+            for pred, label in zip(prediction, test_batch_label_obj):
+                if int(pred)==int(label):
+                    cnt = cnt + 1.0
+            print float(cnt) / float(BUFFER_SIZE) / float(i+1)
+        accuracy = float(cnt) / float(len(test_data_list))
+        return accuracy
 
 # Initialize the Train object
 train = Train()
@@ -490,50 +532,7 @@ train = Train()
 print 'MODE: ' + FLAGS.mode +'ing'
 
 if FLAGS.mode == 'test':
-    # Read testing data
-    BUFFER_SIZE = 100
-    test_data_list = read_path_and_label('test')
-    print 'Prepare the testing batch data...'
-    print '----------------------------'
-
-    NUMBER_OF_BUFFER = len(test_data_list) / BUFFER_SIZE
-    REMINDER = len(test_data_list) % BUFFER_SIZE
-
-    reuse = False
-    cnt = 0.0
-    for i in xrange(NUMBER_OF_BUFFER+1):
-        if i == NUMBER_OF_BUFFER:
-            if REMINDER == 0:
-                break
-            else:
-                offset = NUMBER_OF_BUFFER * BUFFER_SIZE
-                batch_size = REMINDER
-        else:
-            offset = i * BUFFER_SIZE
-            batch_size = BUFFER_SIZE
-        
-        if i>0:
-            reuse = True
-
-        # if i>4:
-        #     break
-
-        print 'current step:%d, total step:%d'%(i, NUMBER_OF_BUFFER)
-        test_batch_hand, _, _, _, test_batch_label_obj = \
-                            train.generate_data_batch(test_data_list, batch_size, 'test', offset)
-        print 'batch is ready'
-        # Start the testing session
-        prob_map = train.test(test_batch_hand, reuse)
-        prediction = np.argmax(prob_map, axis=1)
-        for pred, label in zip(prediction, test_batch_label_obj):
-            if int(pred)==int(label):
-                cnt = cnt + 1.0
-
-        print float(cnt) / float(BUFFER_SIZE) / float(i+1)
-
-    accuracy = float(cnt) / float(len(test_data_list))
-    print accuracy
-
+    print train.cal_accu_on_testing()
 else:
     # Start the training session
     train.train()

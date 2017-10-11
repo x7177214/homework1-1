@@ -83,8 +83,8 @@ def read_path_and_label(train_or_test_folder):
         offset: the offset of cur_folder_idx
         '''
         
-        root_path = '/Disk2/cedl/handcam/labels' # @ AI
-        # root_path = '../dataset/labels' # @ my PC
+        # root_path = '/Disk2/cedl/handcam/labels' # @ AI
+        root_path = '../dataset/labels' # @ my PC
 
         current_path = root_path + '/' + location + '/'
         post_fix = left_or_right + str(offset + cur_folder_idx) + '.npy'
@@ -107,8 +107,8 @@ def read_path_and_label(train_or_test_folder):
     labels_obj = []
     
 
-    root_path = '/Disk2/cedl/handcam/frames/' + train_or_test_folder # @ AI
-    # root_path = '../dataset/frames/' + train_or_test_folder # @ my PC
+    # root_path = '/Disk2/cedl/handcam/frames/' + train_or_test_folder # @ AI
+    root_path = '../dataset/frames/' + train_or_test_folder # @ my PC
 
     for location, num_folders in zip(location_list, num_folders_per_location):
         for i in xrange(num_folders):
@@ -168,7 +168,7 @@ def read_in_imgs(imgs_path_list, mode):
     return images
 
 
-def tfrecords_maker(example):
+def tfrecords_maker(example, file_name = 'training'):
 
     def _bytes_feature(value):
         return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
@@ -176,7 +176,7 @@ def tfrecords_maker(example):
     def _int64_feature(value):
         return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
 
-    tfrecords_filename = 'training_data.tfrecords'
+    tfrecords_filename = file_name + '_data.tfrecords'
 
     writer = tf.python_io.TFRecordWriter(tfrecords_filename)
 
@@ -213,5 +213,5 @@ def tfrecords_maker(example):
 
 if __name__ == '__main__':
     # To save the training data to tfrecord format
-    train_data_list = read_path_and_label('train')
-    tfrecords_maker(train_data_list)
+    train_data_list = read_path_and_label('test')
+    tfrecords_maker(train_data_list, 'testing')
