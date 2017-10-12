@@ -1,4 +1,5 @@
-# Your Name <span style="color:red">(id)</span>
+# CEDL2017 HW1 Report <span style="color:red">(id)</span>
+Author: Hank Lu (呂賢鑫) 105061585
 
 #Project 5: Deep Classification
 
@@ -18,8 +19,17 @@ Code highlights
 ```
 
 ## Installation
-* Other required packages.
-* How to compile from source?
+* [pandas](http://pandas.pydata.org/)
+* [scikit-image](http://scikit-image.org/docs/dev/install.html)
+
+1. Download this project code.
+2. Download [dataset](https://drive.google.com/drive/folders/0BwCy2boZhfdBdXdFWnEtNWJYRzQ)(`frames/` and `labels/`) and place them to this project folder `dataset/`.
+3. Convert the training data to tfRecord format to speed up the training (cost 46 GB space). `python data_input`
+4. For training from script: `python main.py --mode=train --version='model_1'` The training logs, checkpoints, and error.csv file will be saved in the folder with name logs_$version
+4. For testing: 
+* modify the FLAGS: test_ckpt_path to your path to the ckpt (ex: 'logs_onlyhand_c=3_b=15/model.ckpt-39999')
+* then run `python main.py --mode=test`
+
 
 ### Results
 
