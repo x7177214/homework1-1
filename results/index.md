@@ -1,4 +1,4 @@
-# CEDL2017 HW1 Report: Deep Classification <span style="color:red">(id)</span>
+# CEDL2017 HW1 Report: Deep Classification <span style="color:red">(105061585)</span>
 Author: Hank Lu (呂賢鑫) 105061585
 
 ## Overview
@@ -12,13 +12,17 @@ The project is related to classification using Tensorflow and modified from the 
 ### Model Architectures
 This project use the [ResNext](https://arxiv.org/pdf/1611.05431.pdf) to do classification. 
 ![](https://github.com/x7177214/homework1-1/blob/oh%2Cmfc%2Cobj%2Bges/results/arch.png)
+Trained from scratch.
 ### Loss
-It jointly minimize the sum of cross-entroy losses of the 2 taskes. And the loss is simply the summation of the two sub loss.
-We choose one of FA or ges to act as auxi-loss
-i.e.
+Jointly minimize the sum of cross-entroy losses of the 2 taskes.
+We choose one of FA or ges to act as auxiliary loss.
 ```
 loss = k * loss_obj + (1-k) * loss_fa_or_ges
 ```
+### Other detail
+* Resize image to 1/10 (108*192)
+* Random left-right fliping the image at 50% probability while training 
+
 
 ## Installation
 * [pandas](http://pandas.pydata.org/)
