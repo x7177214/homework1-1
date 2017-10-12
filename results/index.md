@@ -26,6 +26,7 @@ loss = k * loss_obj + (1-k) * loss_fa_or_ges
 ### Other detail
 * Resize image to 1/10 (108*192)
 * Random left-right fliping the image at 50% probability while training 
+* Image whitening: Linearly scales image to have zero mean and unit norm.
 
 
 ## Installation
