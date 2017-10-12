@@ -11,7 +11,7 @@ The project is related to classification using Tensorflow and modified from the 
 ## Implementation
 ### Model Architectures
 This project use the [ResNext](https://arxiv.org/pdf/1611.05431.pdf) to do classification. 
-2. Two
+![](https://github.com/x7177214/homework1-1/blob/oh%2Cmfc%2Cobj%2Bges/results/arch.png)
 
 ```
 Code highlights
