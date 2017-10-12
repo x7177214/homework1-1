@@ -8,7 +8,7 @@ This is main body of the ResNext structure
 
 import numpy as np
 from hyper_parameters import *
-from cifar10_input import IMG_WIDTH, IMG_HEIGHT, NUM_FA_CLASS, NUM_GES_CLASS, NUM_OBJ_CLASS 
+from data_input import IMG_WIDTH, IMG_HEIGHT, NUM_FA_CLASS, NUM_GES_CLASS, NUM_OBJ_CLASS 
 
 BN_EPSILON = 0.001
 

@@ -34,23 +34,22 @@ tf.app.flags.DEFINE_integer('train_steps', 80000, '''Total steps that you want t
 tf.app.flags.DEFINE_boolean('is_full_validation', False, '''Validation w/ full validation set or
 a random batch''')
 tf.app.flags.DEFINE_integer('train_batch_size', 15, '''Train batch size''')
-tf.app.flags.DEFINE_integer('validation_batch_size', 100, '''Validation batch size, better to be
-a divisor of 10000 for this task''')
-tf.app.flags.DEFINE_integer('test_batch_size', 10, '''Test batch size''')
+tf.app.flags.DEFINE_integer('validation_batch_size', 120, '''Validation batch size, must be multiplier of 24 ''')
+tf.app.flags.DEFINE_integer('test_batch_size', 20, '''Test batch size''')
 
 
 # tf.app.flags.DEFINE_float('init_lr', 0.001, '''Initial learning rate''')
 # tf.app.flags.DEFINE_float('lr_decay_factor', 0.001, '''How much to decay the learning rate each
 # time''')
-tf.app.flags.DEFINE_float('k', 0.5, '''k * loss_fa + (1-k) * loss_obj''')
-tf.app.flags.DEFINE_float('init_lr', 0.05, '''Initial learning rate''')
-tf.app.flags.DEFINE_float('lr_decay_factor', 4e-3, '''How much to decay the learning rate each
+tf.app.flags.DEFINE_float('k', 0.5, '''k * loss_ges + (1-k) * loss_obj''')
+tf.app.flags.DEFINE_float('init_lr', 0.001, '''Initial learning rate''')
+tf.app.flags.DEFINE_float('lr_decay_factor', 1, '''How much to decay the learning rate each
 time''')
 
 ## The following flags define hyper-parameters modifying the training network
 tf.app.flags.DEFINE_integer('num_resnext_blocks', 3, '''How many blocks do you want,
 total layers = 3n + 2, the paper used n=3, 29 layers, as demo''')
-tf.app.flags.DEFINE_float('weight_decay', 0.0007, '''scale for l2 regularization''')
+tf.app.flags.DEFINE_float('weight_decay', 5e-4, '''scale for l2 regularization''')
 
 
 ## The following flags are related to data-augmentation
@@ -64,12 +63,10 @@ each side of the image''')
 tf.app.flags.DEFINE_boolean('is_use_ckpt', False, '''Whether to load a checkpoint and continue
 training''')
 
-tf.app.flags.DEFINE_string('ckpt_path', 'logs_oh,mfc_c=2_d=64_n=2_lr=0.1_lrd=0.0004_wd=0.0007_k=0.5/model.ckpt-39800', '''Checkpoint
+tf.app.flags.DEFINE_string('ckpt_path', 'logs_oh,mfc_ges+obj_c=4_d=32_n=3_lr=0.001_lrd=1_wd=0.0005_k=0.5/model.ckpt-8800', '''Checkpoint
 directory to restore to continue TRAIN''')
 
-# tf.app.flags.DEFINE_string('test_ckpt_path', 'logs_oh,mfc_ver2_c=4_d=32_n=3_lr=0.05_lrd=0.004_wd=0.0007_k=0.5/model.ckpt-29400', '''Checkpoint
-# directory to restore to TEST''')
-tf.app.flags.DEFINE_string('test_ckpt_path', 'logs_onlyhand_c=3_b=15/model.ckpt-39999', '''Checkpoint
+tf.app.flags.DEFINE_string('test_ckpt_path', 'logs_oh,mfc_ges+obj_c=4_d=32_n=3_lr=0.001_lrd=1_wd=0.0005_k=0.5/model.ckpt-10000', '''Checkpoint
 directory to restore to TEST''')
 
 
