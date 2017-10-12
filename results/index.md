@@ -7,6 +7,7 @@ The project is related to classification using Tensorflow and modified from the 
 - `data_input.py`: Processing data io.
 - `hyper_parameters.py`: Set up the hyper parameters.
 - `resNeXt.py`: Define the [ResNext](https://arxiv.org/pdf/1611.05431.pdf) model.
+- `plotPRcurve.py`: Plot the precision and recall curve.
 
 ## Implementation
 ### Model Architectures
@@ -42,6 +43,7 @@ loss = k * loss_obj + (1-k) * loss_fa_or_ges
 4. For testing: 
 * replace the **test_ckpt_path** FLAGS in `hyper_parameters.py` with your path to the ckpt (ex: 'logs_onlyhand_c=3_b=15/model.ckpt-39999')
 * then run `python main.py --mode=test`
+5. Plot the PR curve: after run the testing, run `python plotPRcurve.py`
 
 
 ### Results
