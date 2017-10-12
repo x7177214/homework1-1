@@ -13,6 +13,7 @@ The project is related to classification using Tensorflow and modified from the 
 This project use the [ResNext](https://arxiv.org/pdf/1611.05431.pdf) as the backbone model.
 And appends fc layers to do classification.
 ![](https://github.com/x7177214/homework1-1/blob/oh%2Cmfc%2Cobj%2Bges/results/arch.png)
+
 The full model is trained from scratch.
 ### Loss
 Jointly minimize the sum of cross-entroy losses of the 2 taskes.
