@@ -1,17 +1,16 @@
-# CEDL2017 HW1 Report <span style="color:red">(id)</span>
+# CEDL2017 HW1 Report: Deep Classification <span style="color:red">(id)</span>
 Author: Hank Lu (呂賢鑫) 105061585
 
-#Project 5: Deep Classification
-
 ## Overview
-The project is related to 
-> quote
-
+The project is related to classification using Tensorflow and modified from the code of [wenxinxu/ResNeXt-in-tensorflow] (https://github.com/wenxinxu/ResNeXt-in-tensorflow)
+- `main.py`: Do training or testing.
+- `data_input.py`: Processing data io.
+- `hyper_parameters.py`: Set up the hyper parameters.
+- `resNeXt.py`: Define the [ResNext](https://arxiv.org/pdf/1611.05431.pdf) model.
 
 ## Implementation
-1. One
-	* item
-	* item
+### Model Architectures
+This project use the [ResNext](https://arxiv.org/pdf/1611.05431.pdf) to do classification. 
 2. Two
 
 ```
