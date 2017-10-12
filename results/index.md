@@ -27,7 +27,7 @@ Code highlights
 3. Convert the training data to tfRecord format to speed up the training (cost 46 GB space). `python data_input`
 4. For training from script: `python main.py --mode=train --version='model_1'` The training logs, checkpoints, and error.csv file will be saved in the folder with name logs_$version
 4. For testing: 
-* modify the FLAGS: test_ckpt_path to your path to the ckpt (ex: 'logs_onlyhand_c=3_b=15/model.ckpt-39999')
+* modify the FLAGS in `hyper_parameters.py`: test_ckpt_path to your path to the ckpt (ex: 'logs_onlyhand_c=3_b=15/model.ckpt-39999')
 * then run `python main.py --mode=test`
 
 
