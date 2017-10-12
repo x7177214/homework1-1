@@ -48,6 +48,17 @@ loss = k * loss_obj + (1-k) * loss_fa_or_ges
 
 
 ### Results
+- c: cardinality
+- d: depth
+- n: number of resblock in a conv. stage
+- lr: learning rate
+- lrd: decay rate of learning rate
+- wd: weight decay rate
+- k: k * loss1 + (1-k) * loss2
+
+c=4_d=32_n=3_lr=0.05_lrd=0.004_wd=0.0007_k=0.5
+
+
 
 <table border=1>
 <tr>
