@@ -62,4 +62,5 @@ loss = k * loss_obj + (1-k) * loss_fa_or_ges
 |obj + FA| `c=4_d=32_n=3_lr=0.05_lrd=0.004_wd=0.0007_k=0.5`| 0.512 |
 |obj + ges| `c=4_d=32_n=3_lr=0.001_lrd=1_wd=0.0005_k=0.5`| 0.548 |
 
+obj + ges	c=4_d=32_n=3_lr=0.001_lrd=1_wd=0.0005_k=0.5
 ![](https://github.com/x7177214/homework1-1/blob/oh%2Cmfc%2Cobj%2Bges/results/figure_1-1.png)
