@@ -45,7 +45,7 @@ def create_variables(name, shape, initializer=tf.contrib.layers.xavier_initializ
     return new_variables
 
 
-def output_layer(input_layer, num_labels):
+def fc_layer(input_layer, num_labels, NAME):
     '''
     Generate the output layer
     :param input_layer: 2D tensor
@@ -53,9 +53,9 @@ def output_layer(input_layer, num_labels):
     :return: output layer Y = WX + B
     '''
     input_dim = input_layer.get_shape().as_list()[-1]
-    fc_w = create_variables(name='fc_weights', shape=[input_dim, num_labels], is_fc_layer=True,
+    fc_w = create_variables(name=NAME + '_weights', shape=[input_dim, num_labels], is_fc_layer=True,
                             initializer=tf.uniform_unit_scaling_initializer(factor=1.0))
-    fc_b = create_variables(name='fc_bias', shape=[num_labels], initializer=tf.zeros_initializer())
+    fc_b = create_variables(name=NAME + '_bias', shape=[num_labels], initializer=tf.zeros_initializer())
 
     fc_h = tf.matmul(input_layer, fc_w) + fc_b
     return fc_h
@@ -273,18 +273,32 @@ def inference(input_tensor_batch, n, reuse):
         with tf.variable_scope('conv3_%d' %i, reuse=reuse):
             conv3 = resnext_block(layers[-1], 256)
             layers.append(conv3)
+        # Insure that the shape is as expected
         # assert conv3.get_shape().as_list()[1:] == [8, 8, 256]
-        assert conv3.get_shape().as_list()[1:] == [IMG_HEIGHT/4, IMG_WIDTH/4, 256]
-
+        # assert conv3.get_shape().as_list()[1:] == [IMG_HEIGHT/4, IMG_WIDTH/4, 256]
 
     with tf.variable_scope('fc', reuse=reuse):
+        '''
+        256 -> FLAGS.num_fc_units -> NUM_GES_CLASS
+            -> FLAGS.num_fc_units -> NUM_OBJ_CLASS
+        '''
         global_pool = tf.reduce_mean(layers[-1], [1, 2])
-
         assert global_pool.get_shape().as_list()[-1:] == [256]
-        output = output_layer(global_pool, NUM_OBJ_CLASS)
-        layers.append(output)
 
-    return layers[-1]
+        fc_obj_layer = fc_layer(global_pool, FLAGS.num_fc_units, NAME='fc1_obj')
+        fc_obj_layer = tf.nn.relu(fc_obj_layer)
+        layers.append(fc_obj_layer)
+        output_obj = fc_layer(fc_obj_layer, NUM_OBJ_CLASS, NAME='fc2_obj')
+
+        fc_ges_layer = fc_layer(global_pool, FLAGS.num_fc_units, NAME='fc1_ges')
+        fc_ges_layer = tf.nn.relu(fc_ges_layer)
+        layers.append(fc_ges_layer)
+        output_ges = fc_layer(fc_ges_layer, NUM_GES_CLASS, NAME='fc2_ges')
+
+        layers.append(output_obj)
+        layers.append(output_ges)
+
+    return layers[-1], layers[-2]
 
 
 def test_graph(train_dir='logs'):
