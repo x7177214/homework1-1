@@ -34,8 +34,12 @@ loss = k * loss_obj + (1-k) * loss_fa_or_ges
 2. Download [dataset](https://drive.google.com/drive/folders/0BwCy2boZhfdBdXdFWnEtNWJYRzQ)(`frames/` and `labels/`) and place them to this project folder `dataset/`.
 3. Convert the training data to tfRecord format to speed up the training (cost 46 GB space). `python data_input`
 4. For training from script: `python main.py --mode=train --version='model_1'` The training logs, checkpoints, and error.csv file will be saved in the folder with name logs_$version
+4. For training from pretrained ckpt: 
+* replace the *is_use_ckpt* FLAGS in `hyper_parameters.py` to True
+* and replace the *ckpt_path* FLAGS in `hyper_parameters.py` with your path to the ckpt (ex: 'logs_oh,mfc_c=2_d=64_n=2_lr=0.1_lrd=0.0004_wd=0.0007_k=0.5/model.ckpt-39800')
+* then `python main.py --mode=train'` 
 4. For testing: 
-* replace the test_ckpt_path FLAGS in `hyper_parameters.py` with your path to the ckpt (ex: 'logs_onlyhand_c=3_b=15/model.ckpt-39999')
+* replace the *test_ckpt_path* FLAGS in `hyper_parameters.py` with your path to the ckpt (ex: 'logs_onlyhand_c=3_b=15/model.ckpt-39999')
 * then run `python main.py --mode=test`
 
 
