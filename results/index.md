@@ -56,31 +56,6 @@ loss = k * loss_obj + (1-k) * loss_fa_or_ges
 - wd: weight decay rate
 - k: k * loss1 + (1-k) * loss2
 
-c=4_d=32_n=3_lr=0.05_lrd=0.004_wd=0.0007_k=0.5
-
-
-
-<table border=1>
-<tr>
-<td>
-<img src="placeholder.jpg" width="24%"/>
-<img src="placeholder.jpg"  width="24%"/>
-<img src="placeholder.jpg" width="24%"/>
-<img src="placeholder.jpg" width="24%"/>
-</td>
-</tr>
-
-<tr>
-<td>
-<img src="placeholder.jpg" width="24%"/>
-<img src="placeholder.jpg"  width="24%"/>
-<img src="placeholder.jpg" width="24%"/>
-<img src="placeholder.jpg" width="24%"/>
-</td>
-</tr>
-
-</table>
-
 | Label | Hyper-para | Accuracy |
 |-------|----------|----------|
 |obj + FA| `c=2_d=64_n=2_lr=0.05_lrd=0.0004_wd=0.0007_k=0.5`| 0.5288 |
