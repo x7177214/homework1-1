@@ -2,7 +2,7 @@
 Author: Hank Lu (呂賢鑫) 105061585
 
 ## Overview
-The project is related to classification using Tensorflow and modified from the code of [wenxinxu/ResNeXt-in-tensorflow] (https://github.com/wenxinxu/ResNeXt-in-tensorflow)
+The project is related to classification using Tensorflow and modified from the code of [wenxinxu/ResNeXt-in-tensorflow](https://github.com/wenxinxu/ResNeXt-in-tensorflow)
 - `main.py`: Do training or testing.
 - `data_input.py`: Processing data io.
 - `hyper_parameters.py`: Set up the hyper parameters.
