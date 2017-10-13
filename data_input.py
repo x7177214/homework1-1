@@ -14,20 +14,17 @@ import skimage.io as io
 import skimage.transform 
 import tensorflow as tf
 
-SCALE_FACTOR = 10 # downsampling scaling factor for training and valid
-TEST_SCALE_FACTOR = 6 # downsampling scaling factor for testing
-
 IMG_RAW_WIDTH = 1920
 IMG_RAW_HEIGHT = 1080
 
 IMG_TMP_WIDTH = IMG_RAW_WIDTH / 2 # temporal size saved in tfrecord
 IMG_TMP_HEIGHT = IMG_RAW_HEIGHT / 2
 
-IMG_TEST_WIDTH = IMG_RAW_WIDTH / TEST_SCALE_FACTOR
-IMG_TEST_HEIGHT = IMG_RAW_HEIGHT / TEST_SCALE_FACTOR
+IMG_TEST_WIDTH = 224
+IMG_TEST_HEIGHT = 224
 
-IMG_WIDTH = IMG_RAW_WIDTH / SCALE_FACTOR
-IMG_HEIGHT = IMG_RAW_HEIGHT / SCALE_FACTOR
+IMG_WIDTH = 224
+IMG_HEIGHT = 224
 
 IMG_DEPTH = 3
 

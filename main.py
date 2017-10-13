@@ -370,28 +370,26 @@ class Train(object):
         image_hand = tf.reshape(image_hand, Image_shape)
         image_head = tf.reshape(image_head, Image_shape)
         
-        # Random transformations can be put here: right before you crop images
-        # to predefined size. To get more information look at the stackoverflow
-        # question linked above.
-
-        # Flip an image at 50% possibility
-        if mode is 'train':
-            image_hand = tf.image.random_flip_left_right(image_hand)
-            image_head = tf.image.random_flip_left_right(image_head)
-            img_width = IMG_WIDTH
-            img_height = IMG_HEIGHT
-        elif mode is 'test':
-            img_width = IMG_TEST_WIDTH
-            img_height = IMG_TEST_HEIGHT
-
-        # Linearly scales image to have zero mean and unit norm.
-        image_hand = tf.image.per_image_standardization(image_hand)
-        image_head = tf.image.per_image_standardization(image_head)
-
+        img_width = 256
+        img_height = 256
         resized_image_hand = tf.image.resize_images(image_hand,
                                             tf.cast([img_height, img_width], tf.int32))
         resized_image_head = tf.image.resize_images(image_head,
                                             tf.cast([img_height, img_width], tf.int32))
+
+        # Flip an image at 50% possibility and random crop
+        if mode is 'train':
+            resized_image_hand = tf.image.random_flip_left_right(resized_image_hand)
+            resized_image_head = tf.image.random_flip_left_right(resized_image_head)
+            resized_image_hand = tf.random_crop(resized_image_hand, [IMG_HEIGHT, IMG_WIDTH, 3])
+            resized_image_head = tf.random_crop(resized_image_head, [IMG_HEIGHT, IMG_WIDTH, 3])
+        elif mode is 'test':
+            resized_image_hand = tf.image.crop_to_bounding_box(resized_image_hand, 16, 16, 224, 224)
+            resized_image_head = tf.image.crop_to_bounding_box(resized_image_head, 16, 16, 224, 224)
+
+        # Linearly scales image to have zero mean and unit norm.
+        resized_image_hand = tf.image.per_image_standardization(resized_image_hand)
+        resized_image_head = tf.image.per_image_standardization(resized_image_head)
 
         if mode is 'train':
             images_hand, images_head, labels_fa, labels_ges, labels_obj = \
@@ -570,9 +568,6 @@ class Train(object):
             
             if i>0:
                 reuse = True
-
-            # if i>4:
-            #     break
 
             print 'current step:%d, total step:%d'%(i, NUMBER_OF_BUFFER)
 

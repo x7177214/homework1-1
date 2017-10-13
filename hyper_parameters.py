@@ -8,10 +8,10 @@ FLAGS = tf.app.flags.FLAGS
 tf.app.flags.DEFINE_string('mode', 'test', '''Specify that the main code is for training or testing''')
 
 ## The following flags define hyper-parameters that specifically characterize ResNeXt
-tf.app.flags.DEFINE_integer('cardinality', 4, '''Cadinality, number of paths in each block''')
+tf.app.flags.DEFINE_integer('cardinality', 3, '''Cadinality, number of paths in each block''')
 tf.app.flags.DEFINE_integer('block_unit_depth', 32, '''the depth(# filters) of each split. 64 for cifar10
 in Figure 7 of the paper''')
-tf.app.flags.DEFINE_integer('num_fc_units', 128, '''Number of neurons in the fc layer''')
+tf.app.flags.DEFINE_integer('num_fc_units', 256, '''Number of neurons in the fc layer''')
 tf.app.flags.DEFINE_string('bottleneck_implementation', 'b', '''To use Figure 3b or 3c to
 implement''')
 
@@ -33,15 +33,15 @@ moving average shown on tensorboard''')
 tf.app.flags.DEFINE_integer('train_steps', 80000, '''Total steps that you want to train''')
 tf.app.flags.DEFINE_boolean('is_full_validation', False, '''Validation w/ full validation set or
 a random batch''')
-tf.app.flags.DEFINE_integer('train_batch_size', 15, '''Train batch size''')
-tf.app.flags.DEFINE_integer('validation_batch_size', 120, '''Validation batch size, must be multiplier of 24 ''')
+tf.app.flags.DEFINE_integer('train_batch_size', 10, '''Train batch size''')
+tf.app.flags.DEFINE_integer('validation_batch_size', 72, '''Validation batch size, must be multiplier of 24 ''')
 tf.app.flags.DEFINE_integer('test_batch_size', 20, '''Test batch size''')
 
 
 # tf.app.flags.DEFINE_float('init_lr', 0.001, '''Initial learning rate''')
 # tf.app.flags.DEFINE_float('lr_decay_factor', 0.001, '''How much to decay the learning rate each
 # time''')
-tf.app.flags.DEFINE_float('k', 0.5, '''k * loss_ges + (1-k) * loss_obj''')
+tf.app.flags.DEFINE_float('k', 0.4, '''k * loss_ges + (1-k) * loss_obj''')
 tf.app.flags.DEFINE_float('init_lr', 0.001, '''Initial learning rate''')
 tf.app.flags.DEFINE_float('lr_decay_factor', 1, '''How much to decay the learning rate each
 time''')
@@ -60,13 +60,13 @@ each side of the image''')
 
 ## If you want to load a checkpoint and continue training
 
-tf.app.flags.DEFINE_boolean('is_use_ckpt', False, '''Whether to load a checkpoint and continue
+tf.app.flags.DEFINE_boolean('is_use_ckpt', True, '''Whether to load a checkpoint and continue
 training''')
 
-tf.app.flags.DEFINE_string('ckpt_path', 'logs_oh,mfc_ges+obj_c=4_d=32_n=3_lr=0.001_lrd=1_wd=0.0005_k=0.5/model.ckpt-8800', '''Checkpoint
+tf.app.flags.DEFINE_string('ckpt_path', 'logs_oh,mfc_ges+obj_ver2_c=3_d=32_n=3_lr=0.001_lrd=1_wd=0.0005_k=0.4/model.ckpt-4600', '''Checkpoint
 directory to restore to continue TRAIN''')
 
-tf.app.flags.DEFINE_string('test_ckpt_path', 'logs_oh,mfc_ges+obj_c=4_d=32_n=3_lr=0.001_lrd=1_wd=0.0005_k=0.5/model.ckpt-10000', '''Checkpoint
+tf.app.flags.DEFINE_string('test_ckpt_path', 'logs_GG123_c=3_d=32_n=3_lr=0.001_lrd=1_wd=0.0005_k=0.4/model.ckpt-30600', '''Checkpoint
 directory to restore to TEST''')
 
 
