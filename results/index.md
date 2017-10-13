@@ -39,7 +39,7 @@ loss = k * loss_fa_or_ges + (1-k) * loss_obj
 4. For continuing training: 
 * replace the **is_use_ckpt** FLAGS in `hyper_parameters.py` to **True**
 * and replace the **ckpt_path** FLAGS in `hyper_parameters.py` with your path to the ckpt (ex: 'logs_oh,mfc_c=2_d=64_n=2_lr=0.1_lrd=0.0004_wd=0.0007_k=0.5/model.ckpt-39800')
-* then `python main.py --mode=train'` 
+* then `python main.py --mode=train` 
 4. For testing: 
 * replace the **test_ckpt_path** FLAGS in `hyper_parameters.py` with your path to the ckpt (ex: 'logs_onlyhand_c=3_b=15/model.ckpt-39999')
 * then run `python main.py --mode=test`
@@ -62,10 +62,10 @@ loss = k * loss_fa_or_ges + (1-k) * loss_obj
 
 | Label | Hyper-para | Accuracy |
 |-------|----------|----------|
-|obj + FA| `W=192_H=108_m=128_c=2_d=64_n=2_lr=0.05_lrd=0.0004_wd=0.0007_k=0.5`| 0.529 |
 |obj + FA| `W=192_H=108_m=128_c=4_d=32_n=3_lr=0.05_lrd=0.004_wd=0.0007_k=0.5`| 0.512 |
+|obj + FA| `W=192_H=108_m=128_c=2_d=64_n=2_lr=0.05_lrd=0.0004_wd=0.0007_k=0.5`| 0.529 |
 |obj + ges| `W=192_H=108_m=128_c=4_d=32_n=3_lr=0.001_lrd=1_wd=0.0005_k=0.5`| 0.548 |
-|obj + ges| `W=224_H=224_m=256_c=3_d=32_n=3_lr=0.001_lrd=1_wd=0.0005_k=0.4`| 0.554 |
+|obj + ges| `W=224_H=224_m=256_c=3_d=32_n=3_lr=0.001_lrd=1_wd=0.0005_k=0.4`| 0.562 |
 
 obj + ges	W=192_H=108_m_128_c=4_d=32_n=3_lr=0.001_lrd=1_wd=0.0005_k=0.5:
 ![](./figure_1-1.png)
