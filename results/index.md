@@ -71,4 +71,4 @@ obj + ges	W=192_H=108_m_128_c=4_d=32_n=3_lr=0.001_lrd=1_wd=0.0005_k=0.5:
 ![](./figure_1-1.png)
 
 obj + ges	W=224_H=224_m=256_c=3_d=32_n=3_lr=0.001_lrd=1_wd=0.0005_k=0.4:
-![](./figure_1-.png)
+![](./figure_1-2.png)
