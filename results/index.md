@@ -1,5 +1,4 @@
 # CEDL2017 HW1 Report: Deep Classification <span style="color:red">(105061585)</span>
-Author: Hank Lu (呂賢鑫) 105061585
 
 ## Overview
 The project is related to classification using Tensorflow and modified from the code of [wenxinxu/ResNeXt-in-tensorflow](https://github.com/wenxinxu/ResNeXt-in-tensorflow)
