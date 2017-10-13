@@ -52,7 +52,7 @@ loss = k * loss_fa_or_ges + (1-k) * loss_obj
 - n: number of resblock in a conv. stage
 - lr: learning rate
 - lrd: decay rate of learning rate
-- wd: weight decay rate
+- wd: weight decay rate (L2)
 - k: loss = k * loss_fa_or_ges + (1-k) * loss_obj
 - H: image height
 - W: image width
