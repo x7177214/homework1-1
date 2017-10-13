@@ -21,7 +21,7 @@ The full model is trained from scratch.
 Jointly minimize the sum of cross-entroy losses of the 2 taskes.
 We choose one of FA or ges to act as auxiliary loss.
 ```
-loss = k * loss_obj + (1-k) * loss_fa_or_ges
+loss = k * loss_fa_or_ges + (1-k) * loss_obj
 ```
 ### Other detail
 * Random left-right fliping the image at 50% probability while training 
@@ -54,7 +54,7 @@ loss = k * loss_obj + (1-k) * loss_fa_or_ges
 - lr: learning rate
 - lrd: decay rate of learning rate
 - wd: weight decay rate
-- k: k * loss1 + (1-k) * loss2
+- k: loss = k * loss_fa_or_ges + (1-k) * loss_obj
 - H: image height
 - W: image width
 - m: # neurons in fc layer
