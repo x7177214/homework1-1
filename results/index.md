@@ -14,7 +14,7 @@ The project is related to classification using Tensorflow and modified from the 
 This project use the [ResNext](https://arxiv.org/pdf/1611.05431.pdf) as the backbone model.
 And appends fc layers to do classification. The input is only hand image.
 
-![](https://github.com/x7177214/homework1-1/blob/oh%2Cmfc%2Cobj%2Bges/results/arch.png)
+![](https://github.com/x7177214/homework1-1/blob/oh%2Cmfc%2Cobj%2Bges_ver2/results/arch.png)
 
 The full model is trained from scratch.
 ### Loss
@@ -24,8 +24,8 @@ We choose one of FA or ges to act as auxiliary loss.
 loss = k * loss_obj + (1-k) * loss_fa_or_ges
 ```
 ### Other detail
-* Resize image to 1/10 (108*192)
 * Random left-right fliping the image at 50% probability while training 
+* Random crop to size of W*H
 * Image whitening: Linearly scales image to have zero mean and unit norm.
 
 
@@ -55,13 +55,19 @@ loss = k * loss_obj + (1-k) * loss_fa_or_ges
 - lrd: decay rate of learning rate
 - wd: weight decay rate
 - k: k * loss1 + (1-k) * loss2
+- H: image height
+- W: image width
+- m: # neurons in fc layer
 
 | Label | Hyper-para | Accuracy |
 |-------|----------|----------|
-|obj + FA| `c=2_d=64_n=2_lr=0.05_lrd=0.0004_wd=0.0007_k=0.5`| 0.529 |
-|obj + FA| `c=4_d=32_n=3_lr=0.05_lrd=0.004_wd=0.0007_k=0.5`| 0.512 |
-|obj + ges| `c=4_d=32_n=3_lr=0.001_lrd=1_wd=0.0005_k=0.5`| 0.548 |
+|obj + FA| `W=192_H=108_m=128_c=2_d=64_n=2_lr=0.05_lrd=0.0004_wd=0.0007_k=0.5`| 0.529 |
+|obj + FA| `W=192_H=108_m=128_c=4_d=32_n=3_lr=0.05_lrd=0.004_wd=0.0007_k=0.5`| 0.512 |
+|obj + ges| `W=192_H=108_m=128_c=4_d=32_n=3_lr=0.001_lrd=1_wd=0.0005_k=0.5`| 0.548 |
+|obj + ges| `W=224_H=224_m=256_c=3_d=32_n=3_lr=0.001_lrd=1_wd=0.0005_k=0.4`| 0.554 |
 
-
-obj + ges	c=4_d=32_n=3_lr=0.001_lrd=1_wd=0.0005_k=0.5:
+obj + ges	W=192_H=108_m_128_c=4_d=32_n=3_lr=0.001_lrd=1_wd=0.0005_k=0.5:
 ![](https://github.com/x7177214/homework1-1/blob/oh%2Cmfc%2Cobj%2Bges/results/figure_1-1.png)
+
+obj + ges	W=224_H=224_m=256_c=3_d=32_n=3_lr=0.001_lrd=1_wd=0.0005_k=0.4:
+![](./figure_1-.png)
