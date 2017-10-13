@@ -14,7 +14,7 @@ The project is related to classification using Tensorflow and modified from the 
 This project use the [ResNext](https://arxiv.org/pdf/1611.05431.pdf) as the backbone model.
 And appends fc layers to do classification. The input is only hand image.
 
-![](https://github.com/x7177214/homework1-1/blob/oh%2Cmfc%2Cobj%2Bges_ver2/results/arch.png)
+![](./arch.png)
 
 The full model is trained from scratch.
 ### Loss
@@ -67,7 +67,7 @@ loss = k * loss_obj + (1-k) * loss_fa_or_ges
 |obj + ges| `W=224_H=224_m=256_c=3_d=32_n=3_lr=0.001_lrd=1_wd=0.0005_k=0.4`| 0.554 |
 
 obj + ges	W=192_H=108_m_128_c=4_d=32_n=3_lr=0.001_lrd=1_wd=0.0005_k=0.5:
-![](https://github.com/x7177214/homework1-1/blob/oh%2Cmfc%2Cobj%2Bges/results/figure_1-1.png)
+![](./figure_1-1.png)
 
 obj + ges	W=224_H=224_m=256_c=3_d=32_n=3_lr=0.001_lrd=1_wd=0.0005_k=0.4:
 ![](./figure_1-.png)
